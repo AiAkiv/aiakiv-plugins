@@ -1,0 +1,24 @@
+{
+  "name": "aiakiv",
+  "displayName": "AiAkiv Memory",
+  "version": "0.1.0",
+  "description": "Long-term memory for AI agents. Save and recall conversation knowledge as a knowledge graph (MemoryWeft) via a hosted MCP server.",
+  "author": {
+    "name": "OnMinimum",
+    "url": "https://aiakiv.com"
+  },
+  "homepage": "https://aiakiv.com",
+  "repository": "https://github.com/aiakiv/aiakiv-plugins",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "long-term-memory",
+    "knowledge-graph",
+    "mcp",
+    "mweft",
+    "memoryweft",
+    "recall"
+  ],
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/"
+}

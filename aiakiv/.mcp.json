@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "AiAkiv": {
+      "type": "http",
+      "url": "https://mcp.aiakiv.com/mcp"
+    }
+  }
+}

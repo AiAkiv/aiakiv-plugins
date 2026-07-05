@@ -1,0 +1,21 @@
+{
+  "name": "aiakiv",
+  "description": "Official AiAkiv marketplace: long-term memory plugins for AI agents (MemoryWeft).",
+  "owner": {
+    "name": "OnMinimum",
+    "url": "https://aiakiv.com"
+  },
+  "plugins": [
+    {
+      "name": "aiakiv",
+      "source": "./aiakiv",
+      "description": "Long-term memory for AI agents: save and recall conversation knowledge as a knowledge graph (MemoryWeft), via the hosted AiAkiv MCP server.",
+      "version": "0.1.0",
+      "author": {
+        "name": "OnMinimum",
+        "url": "https://aiakiv.com"
+      },
+      "keywords": ["memory", "knowledge-graph", "mcp", "mweft", "recall"]
+    }
+  ]
+}
