@@ -1,0 +1,22 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "AiAkiv — Shared Memory for AI Agents",
+  "description": "AiAkiv (MemoryWeft / MWeft) is a hosted long-term memory that AI agents and teammates share over the Model Context Protocol (MCP). It stores conversation content as a knowledge graph and recalls it across sessions, folders, and AI clients. Docs cover installing/connecting each client, saving and recalling, and the Team -> Project -> Domain model (with per-project personas).",
+  "folders": [
+    "aiakiv"
+  ],
+  "excludeFolders": [],
+  "excludeFiles": [
+    "LICENSE"
+  ],
+  "rules": [
+    "The MCP endpoint is https://mcp.aiakiv.com/mcp. The URL MUST end with /mcp; the bare host (mcp.aiakiv.com) connects but exposes ZERO tools. Never guess a brand-domain URL like aiakiv.com/mcp.",
+    "AiAkiv is a HOSTED service (operated by OnMinimum), not an anonymous/public server. Connecting requires signing in via OAuth, or a project-bound API key (Gemini CLI). There is no keyless anonymous mode.",
+    "AiAkiv is NOT in any connector directory. Do not tell the user to search a directory for it — have them add it MANUALLY as a custom connector with the endpoint above.",
+    "Memory is addressed as Team -> Project -> Domain. A Project is a named save-target; it can carry a PERSONA (a role the connected AI adopts). Project names are English-only (they ride in an HTTP header).",
+    "Folder clients (Claude Code, Codex, Cursor, Gemini CLI) pick a project with the X-K2G-Project header; order is create project -> connect (no Main step). Global web clients (Claude Web, ChatGPT, xAI/Grok) follow the Main project; order is create project -> set Main -> connect.",
+    "Antigravity: its mcp_config.json is app-wide (no per-folder config) but supports a native headers object, so the project is pinned by a project-scoped API key in the Authorization header (Main does not apply). Its remote key MUST be `serverUrl` — `url`, `httpUrl`, and `type` are rejected by its strict schema. Open it via Agent panel ... -> MCP Servers -> Manage MCP Servers -> View raw config.",
+    "Saving is explicit: only on an 'ak' / 'mweft' / 'memoryweft' command (e.g. 'ak save'). Never save on a bare 'remember' / 'save'. Search before proposing with mweft_search(query, mode='hybrid').",
+    "Projects, teams, keys, Main-switching, and personas are managed by the human in the console at https://aiakiv.com — an AI cannot change them."
+  ]
+}

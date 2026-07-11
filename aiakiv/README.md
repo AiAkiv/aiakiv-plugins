@@ -47,6 +47,14 @@ sign up and approve — the `mweft_*` tools then appear.
 
 See the `aiakiv-onboarding` skill for binding a folder to a specific project.
 
+## Learn more
+
+- [docs/concepts.md](./docs/concepts.md) — the **Team → Project → Domain** model,
+  Main, and per-project **personas** (roles the AI adopts).
+- [docs/connect.md](./docs/connect.md) — connecting **every** client (Claude Web,
+  ChatGPT, Cursor, Codex, Gemini CLI, xAI/Grok…), folder-vs-global binding, the setup
+  order, and cautions.
+
 ## Trust & data
 
 AiAkiv is a **hosted** service. Content you save leaves your machine and is stored
