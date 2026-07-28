@@ -21,6 +21,18 @@ in the browser — sign in / sign up, approve, and the `mweft_*` tools become
 available. If no tools appear, the URL must be the canonical `/mcp` (the bare
 domain returns zero tools).
 
+If the user asks how to add AiAkiv to a **different** client, it is also published
+in the official MCP Registry as `com.aiakiv/memory` — a client that can search the
+registry finds it by name (`aiakiv`) or keyword (`memory`) and registers the
+endpoint itself. Same address, same one-time sign-in; the registry only removes the
+typing. Tell them the endpoint above either way.
+
+**Do not send a ChatGPT user down that path.** ChatGPT cannot search the registry or
+write an MCP config, and it does not complete our OAuth sign-in — it reads the `401`
+and asks for a bearer token in an environment variable. For ChatGPT: add the URL in
+the connector UI, and if no sign-in appears, have them issue a project-bound API key
+in the console and paste that.
+
 ## 2. Confirm where memory is going (the "active target")
 
 Every save lands in one **project** (a domain/group coordinate). Before saving,

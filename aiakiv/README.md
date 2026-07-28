@@ -37,6 +37,19 @@ so the install command is identical to the production one above — only the
 On first use, Claude Code opens an **OAuth** login in your browser. Sign in /
 sign up and approve — the `mweft_*` tools then appear.
 
+### Other clients — ask your agent to install it
+
+Outside Claude Code, AiAkiv is a remote MCP server at `https://mcp.aiakiv.com/mcp`.
+It is published in the official MCP Registry as **`com.aiakiv/memory`**, so a client
+that can search the registry will find it by name (`aiakiv`) or keyword (`memory`)
+and register the endpoint for you — no URL to paste. Either way you still approve the
+sign-in once. See [docs/connect.md](docs/connect.md) for per-client steps.
+
+> **ChatGPT is the exception.** It cannot search the registry or write an MCP config,
+> and it does not complete the OAuth sign-in — it asks for a bearer token instead. In
+> ChatGPT, add the URL through the connector UI and, if no sign-in is offered, use a
+> project-bound API key from the console.
+
 ## Quick start
 
 - **Save**: say `ak save this` (or `ak 저장`). Saves are explicit — a bare

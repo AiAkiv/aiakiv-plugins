@@ -12,8 +12,29 @@ two client kinds, the order to do things in, and the per-client steps.
   like `aiakiv.com/mcp`.
 - AiAkiv is a **hosted** service — connecting requires signing in (**OAuth**) or a
   project-bound **API key** (Gemini CLI). There is no anonymous/keyless mode.
-- **AiAkiv is not in any connector directory.** Do not search a directory for it —
-  add it **manually** as a custom connector with the URL above.
+- AiAkiv **is** in the official MCP Registry as `com.aiakiv/memory` (see below), but
+  it is **not** in the in-app connector directories of ChatGPT / Claude Web / Grok.
+  In those apps, add it **manually** as a custom connector with the URL above.
+
+## Finding it in the official MCP Registry
+
+AiAkiv is published at `registry.modelcontextprotocol.io` as **`com.aiakiv/memory`**.
+A client that can search the registry finds it by name (`aiakiv`) or by keyword
+(`memory`) and registers the endpoint itself — so you can just ask your agent to
+"find aiakiv in the MCP registry and install it" instead of pasting the URL.
+
+- The listing points at the same address as above, so the outcome is identical. The
+  registry only saves you the typing — **it does not skip the sign-in step**.
+- Registry search matches the **name**, not the description.
+
+> **ChatGPT cannot do this.** The ChatGPT app cannot search the registry, cannot
+> write an MCP config itself, and — the part that actually blocks it — does not
+> complete our OAuth sign-in: it receives the `401` with `WWW-Authenticate` and asks
+> you for a bearer token in an environment variable instead of opening the sign-in
+> window. For ChatGPT use the connector UI (see *Global web clients* below), and if
+> your build offers no sign-in there, paste a project-bound API key from the console.
+> Clients that follow the `401` header (Claude Code, for example) open the sign-in
+> window normally.
 
 Console (create projects/teams/keys, switch Main, set personas): <https://aiakiv.com>
 
@@ -126,6 +147,9 @@ Personalization → Custom Instructions; Claude Web: the Project's custom instru
    re-authenticating. Keep a separate config per folder to avoid repeated logins.
 4. **Gemini CLI:** its OAuth session does not persist — you must use the API-key
    method.
+5. **ChatGPT app:** it does not complete OAuth. Given a `401`, it asks for a bearer
+   token instead of signing in, so registry/URL registration stops there. Use a
+   project-bound API key from the console for that client.
 
 ## Verify
 
