@@ -2,17 +2,27 @@
 
 Long-term memory for AI agents. AiAkiv (MemoryWeft / MWeft) stores your important
 conversation content as a **knowledge graph** and recalls it across sessions,
-folders, and clients. This plugin bundles the hosted AiAkiv MCP server plus a
-short onboarding skill.
+folders, and clients. This plugin bundles the hosted AiAkiv MCP server plus skills for
+onboarding, share cards, graph queries, and partner links.
 
 ## What you get
 
 - **`AiAkiv` MCP server** (remote, hosted at `https://mcp.aiakiv.com/mcp`) —
   tools to save (`mweft_remember`), search (`mweft_search`), explore the graph
-  (`mweft_neighbors`, `mweft_relations`, `mweft_community_explore`), and confirm
+  (`mweft_discover`, `mweft_neighbors`, `mweft_temporal_flow`), and confirm
   where memory is going (`mweft_active_target`).
 - **`aiakiv-onboarding` skill** — walks you through connect → authenticate →
   pick project → save/recall.
+- **`aiakiv-cards` skill** — turns a memory topic into a public share card
+  (`card.aiakiv.com`): the create procedure, image-fit guidance, and the
+  publish/delete rules the AI must relay.
+- **`aiakiv-graph-query` skill** — how to write graph queries (Cypher subset)
+  with `mweft_graph_query`: the grammar, the relation vocabulary, ready-made
+  recipes (shared-entity bridges, threads, "similar but structurally
+  connected"), and how to react to budgets and rejections.
+- **`aiakiv-links` skill** — reading a linked partner org's memory
+  (`mweft_link_*`): which tool fits which question, keeping partner content
+  labelled as theirs, and what each link error reason means.
 
 ## Install
 
