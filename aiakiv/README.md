@@ -8,21 +8,24 @@ onboarding, share cards, graph queries, and partner links.
 ## What you get
 
 - **`AiAkiv` MCP server** (remote, hosted at `https://mcp.aiakiv.com/mcp`) —
-  tools to save (`mweft_remember`), search (`mweft_search`), explore the graph
-  (`mweft_discover`, `mweft_neighbors`, `mweft_temporal_flow`), and confirm
-  where memory is going (`mweft_active_target`).
+  tools to save (`save_memory`), search (`search_memory`), explore the graph
+  (`find_related_memories`, `find_memory_connections`, `list_memory_timeline`), and confirm
+  where memory is going (`get_save_target`).
 - **`aiakiv-onboarding` skill** — walks you through connect → authenticate →
   pick project → save/recall.
 - **`aiakiv-cards` skill** — turns a memory topic into a public share card
   (`card.aiakiv.com`): the create procedure, image-fit guidance, and the
   publish/delete rules the AI must relay.
 - **`aiakiv-graph-query` skill** — how to write graph queries (Cypher subset)
-  with `mweft_graph_query`: the grammar, the relation vocabulary, ready-made
+  with `query_memory_graph`: the grammar, the relation vocabulary, ready-made
   recipes (shared-entity bridges, threads, "similar but structurally
   connected"), and how to react to budgets and rejections.
-- **`aiakiv-links` skill** — reading a linked partner org's memory
-  (`mweft_link_*`): which tool fits which question, keeping partner content
+- **`aiakiv-links` skill** — reading a linked partner org's memory (the
+  `*_partner_*` tools): which tool fits which question, keeping partner content
   labelled as theirs, and what each link error reason means.
+- **`aiakiv-save-and-recall` skill** — writing a memory that stays findable
+  (summary and entity spelling), what to do when a save is rejected, and how to
+  read the related-memory signal that search responses carry.
 
 ## Install
 
@@ -64,9 +67,9 @@ sign-in once. See [docs/connect.md](docs/connect.md) for per-client steps.
 
 - **Save**: say `ak save this` (or `ak 저장`). Saves are explicit — a bare
   "remember" will not trigger a save.
-- **Recall**: ask a question; Claude calls `mweft_search`. Or ask
+- **Recall**: ask a question; Claude calls `search_memory`. Or ask
   "what do I have on X".
-- **Check target**: "which project is my memory going to?" → `mweft_active_target`.
+- **Check target**: "which project is my memory going to?" → `get_save_target`.
 
 See the `aiakiv-onboarding` skill for binding a folder to a specific project.
 

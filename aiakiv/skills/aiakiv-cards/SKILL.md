@@ -26,13 +26,13 @@ first, verbatim.
 
 ## Procedure
 
-1. **Search memory first** (`mweft_search`). The card summarizes what is
+1. **Search memory first** (`search_memory`). The card summarizes what is
    actually stored — do not invent content. Set `source_count` to the number
    of memories you actually used.
 2. **Filter for sensitivity** — personal names, emails, internal addresses,
    decisions not yet public. If the topic is at all sensitive, show the user a
    draft and get a go-ahead before creating.
-3. **Get the live format**: `aiakiv_app_data(app="card", action="describe")`.
+3. **Get the live format**: `run_aiakiv_app_action(app="card", action="describe")`.
    Only `describe` and `create` exist — this tool cannot delete, edit, or
    change search visibility.
 4. **Write to fit the image, not just the limits.** `describe` returns
@@ -42,7 +42,7 @@ first, verbatim.
    under `max_chars_each` (120) is NOT enough. Aim to fit on the first try —
    re-creating issues a NEW key and leaves the old card published and counted
    against quota until the user deletes it in the console.
-5. **Create**: `aiakiv_app_data(app="card", action="create", data={...})`.
+5. **Create**: `run_aiakiv_app_action(app="card", action="create", data={...})`.
    Fields: `title` (≤80), `bullets` (3–5), `conclusion` (≤200),
    `source_count`, `tags` (≤3, ≤20 chars each — these are the search terms on
    card.aiakiv.com), `body` (optional, ≤30k chars, restricted markdown:
@@ -75,6 +75,9 @@ first, verbatim.
 - Claim you deleted a card or toggled search visibility — you can't. Manage-
   ment (list, copy link, images, delete, search-visibility toggle) lives in
   the AiAkiv console → Data → Cards (app.aiakiv.com).
+- Offer to set the user's public nickname or attach filing tags — you can't.
+  Those are console-only too (see below). `data.tags` is a different thing:
+  card tags are baked into the image at create time and cannot be changed.
 - Quietly re-create after a `fit` warning — that leaves two public cards.
 - Paste the card's URL anywhere on the user's behalf; sharing is their call.
 
@@ -86,6 +89,13 @@ first, verbatim.
 - Search visibility is OFF by default. Turning it on (console) lists the card
   on card.aiakiv.com search by title/tags; turning it off later un-lists it
   but the card stays public to anyone with the address.
+- card.aiakiv.com search narrows three ways — text, author nickname, filing
+  tag — and the address bar tracks whatever is narrowed, so any view can be
+  shared as a link. **Nickname and filing tags are set in the console, by the
+  user, not by you.** A nickname is optional; without one nothing identifying
+  the user is published. Their email is never published in any case. Filing
+  tags show on the card page and group cards in search; they never change the
+  card image.
 - Deleting removes the page immediately, but third-party preview caches can
   linger. Deleting the account does NOT delete cards — clean up in the console
   first.

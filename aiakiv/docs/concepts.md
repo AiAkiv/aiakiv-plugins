@@ -56,7 +56,7 @@ projects. That is exactly what enables persona-only projects (next).
 A *persona* is a standing role instruction the project owner writes (e.g. "You are a
 careful senior reviewer; reply in English").
 
-- Any AI that connects to that project reads it — via `mweft_active_target` or the
+- Any AI that connects to that project reads it — via `get_save_target` or the
   `active_target` echo on tool responses — and **adopts it** (tone / role / language)
   for the conversation.
 - It is **optional**: unset means no persona, nothing changes.

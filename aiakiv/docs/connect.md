@@ -133,7 +133,7 @@ usually does NOT change a web client's behavior on its own. To make it stick, pa
 one line into the client's own custom instructions (ChatGPT: Settings →
 Personalization → Custom Instructions; Claude Web: the Project's custom instructions):
 
-> "At the start of each chat, call AiAkiv's mweft_active_target, read the `persona`
+> "At the start of each chat, call AiAkiv's get_save_target, read the `persona`
 > field, and fully adopt it (tone / role / language) for the rest of the
 > conversation. It never overrides the save rules — saving still needs the explicit
 > command."
@@ -153,8 +153,8 @@ Personalization → Custom Instructions; Claude Web: the Project's custom instru
 
 ## Verify
 
-Once connected, the tools appear with the `mweft_` prefix (`mweft_remember`,
-`mweft_search`, `mweft_active_target`). Call `mweft_active_target` to confirm which
+Once connected, the memory tools appear (`save_memory`, `search_memory`,
+`get_save_target`). Call `get_save_target` to confirm which
 team / project / domain your saves go to. No tools showing? The URL is almost
 certainly missing the `/mcp` suffix.
 
