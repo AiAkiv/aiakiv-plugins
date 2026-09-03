@@ -16,7 +16,7 @@
     "Memory is addressed as Team -> Project -> Domain. A Project is a named save-target; it can carry a PERSONA (a role the connected AI adopts). Project names are English-only (they ride in an HTTP header).",
     "Folder clients (Claude Code, Codex, Cursor, Gemini CLI) pick a project with the X-K2G-Project header; order is create project -> connect (no Main step). Global web clients (Claude Web, ChatGPT, xAI/Grok) follow the Main project; order is create project -> set Main -> connect.",
     "Antigravity: its mcp_config.json is app-wide (no per-folder config) but supports a native headers object, so the project is pinned by a project-scoped API key in the Authorization header (Main does not apply). Its remote key MUST be `serverUrl` — `url`, `httpUrl`, and `type` are rejected by its strict schema. Open it via Agent panel ... -> MCP Servers -> Manage MCP Servers -> View raw config.",
-    "Saving is explicit: only on an 'ak' / 'mweft' / 'memoryweft' command (e.g. 'ak save'). Never save on a bare 'remember' / 'save'. Search before proposing with search_memory(query, mode='hybrid').",
+    "Saving is explicit: only on an 'ak' command (e.g. 'ak save'). Never save on a bare 'remember' / 'save'. Search before proposing with search_memory(query, mode='hybrid').",
     "Projects, teams, keys, Main-switching, and personas are managed by the human in the console at https://aiakiv.com — an AI cannot change them."
   ]
 }
