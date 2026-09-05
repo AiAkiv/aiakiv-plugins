@@ -64,8 +64,10 @@ first, verbatim.
   crop. Let the user decide whether to shorten and re-create — and if they do,
   remind them the old card stays up until deleted.
 - **Errors** (`{error, hint, field}`): `invalid_card` → fix the named field
-  and retry; `payload_too_large` → shrink the body; `quota_exceeded` (50 held /
-  10 per hour / 30 per day) → tell the user; anything else → relay and stop.
+  and retry; `payload_too_large` → shrink the body; `quota_exceeded` (the
+  response carries `window`, `limit`, `used` — rate caps are 10 per hour /
+  30 per day; the holding cap is far higher) → tell the user; anything else →
+  relay and stop.
   On any error the card was NOT created — never say it was.
 
 ## What you must not do

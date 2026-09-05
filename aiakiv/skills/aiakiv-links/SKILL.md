@@ -20,6 +20,13 @@ partner is down) and tells you which links are `usable` before you spend a
 remote call. If the tools are absent from the tool list, the server has links
 disabled — say so.
 
+Links run **one way**, and the list holds the ones whose reading direction
+points at the user's org — blocked ones included, with `usable` saying which
+answer right now. Links their org **provides** (their team issued the invite, so
+the link opens their memory to the partner) are left out entirely — nothing to
+read, nothing to fix; `provided_link_count` says how many exist, and they are
+managed in the console.
+
 **Call link tools one at a time.** Your org may have only one link call in
 flight at once. Two link tools issued in the same batch — the habit that serves
 you well everywhere else — means the second returns `error: busy` without
@@ -61,8 +68,11 @@ memory failed:
   `org_not_party`, `principal_not_active` — this link cannot be read (or this
   direction is closed). Show `list_partner_links` output; fixing it is an
   owner/console action, not a retry.
-- `we_are_provider` — the user's org is the *providing* side; there is
-  nothing to read in this direction. Normal state, not a failure.
+  - One case has nothing to fix: a `link_id` that `list_partner_links` does not
+    list at all (the user may have copied it from the console's "links we
+    provide" group) is one their org **provides**, and its refusal is
+    `principal_not_active`. Say that it opens their memory outward rather than
+    sending them to fix a direction.
 - `contract_version_too_old` — both owners must re-consent;
   `list_partner_links` → `reconsent` shows who is missing.
 - `budget_exceeded` — the remote row/time budget ran out mid-walk. Narrow the
