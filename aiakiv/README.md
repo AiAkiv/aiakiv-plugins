@@ -23,6 +23,10 @@ onboarding, share cards, graph queries, and partner links.
 - **`aiakiv-links` skill** — reading a linked partner org's memory (the
   `*_partner_*` tools): which tool fits which question, keeping partner content
   labelled as theirs, and what each link error reason means.
+- **`aiakiv-console` skill** — managing the account from the conversation
+  through `run_aiakiv_app_action(app="console")`: teams and invitations, org
+  links, audit logs, save-target history, project presets, and the cards the
+  user created. Irreversible operations stay in the web console.
 - **`aiakiv-save-and-recall` skill** — writing a memory that stays findable
   (summary and entity spelling), what to do when a save is rejected, and how to
   read the related-memory signal that search responses carry.

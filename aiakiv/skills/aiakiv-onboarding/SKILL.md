@@ -48,9 +48,10 @@ confirm it:
 - **Save** — only on an explicit `ak` / `mweft` / `memoryweft` utterance
   (e.g. "ak save this", "ak 저장"). Never save on a bare "remember"/"save",
   and never treat "summarize this" as a save. Use `save_memory`.
-- **Recall** — `search_memory(query, mode="hybrid", top_k=5)`. Hybrid crosses
-  naming variants; prefer it over guessing. Read each hit's `reason` tags and the
-  `hint` connection map, not just the flat `hits`.
+- **Recall** — `search_memory(query, top_k=5)`. Ask with a full sentence rather
+  than keywords; the ranking is semantic, so a guessed keyword is worse than the
+  real question. Read each hit's `reason` tags and the `hint` connection map,
+  not just the flat `hits`.
 - To browse one person's contributions, start the query with `@<handle>`.
 
 ## 4. Bind a folder to a specific project (optional)

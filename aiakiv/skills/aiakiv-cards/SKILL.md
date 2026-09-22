@@ -33,8 +33,11 @@ first, verbatim.
    decisions not yet public. If the topic is at all sensitive, show the user a
    draft and get a go-ahead before creating.
 3. **Get the live format**: `run_aiakiv_app_action(app="card", action="describe")`.
-   Only `describe` and `create` exist — this tool cannot delete, edit, or
-   change search visibility.
+   The card app itself has only `describe` and `create`. Listing, deleting,
+   search-visibility and filing tags for cards the user already made go
+   through `app="console"` (`list_cards`, `delete_card`, `set_card_searchable`,
+   `set_card_tags`) — see the aiakiv-console skill. Editing a card's text is
+   not possible anywhere; re-create instead.
 4. **Write to fit the image, not just the limits.** `describe` returns
    `bullets.renders` with the measured safe line width (~30 Hangul chars) and
    max lines per bullet. Bullets share one fixed block of vertical space:
@@ -74,12 +77,14 @@ first, verbatim.
 
 - Create a card the user didn't ask for ("summarize this" is not a card request).
 - Fill a card with content that isn't in memory.
-- Claim you deleted a card or toggled search visibility — you can't. Manage-
-  ment (list, copy link, images, delete, search-visibility toggle) lives in
-  the AiAkiv console → Data → Cards (app.aiakiv.com).
-- Offer to set the user's public nickname or attach filing tags — you can't.
-  Those are console-only too (see below). `data.tags` is a different thing:
-  card tags are baked into the image at create time and cannot be changed.
+- Claim you deleted a card or toggled search visibility unless the
+  `app="console"` call actually returned `ok: true` — a `delete_card` error
+  means the card is still up. The web console (app.aiakiv.com → Data → Cards)
+  does the same things by hand.
+- Offer to set the user's public nickname or edit their tag palette — those
+  are console-only. Filing tags on one card (`set_card_tags`) are a different
+  thing from `data.tags`: card tags are baked into the image at create time
+  and cannot be changed.
 - Quietly re-create after a `fit` warning — that leaves two public cards.
 - Paste the card's URL anywhere on the user's behalf; sharing is their call.
 
@@ -88,7 +93,8 @@ first, verbatim.
 - KakaoTalk / Slack / Discord / Notion / blogs unfurl the bare URL into a card.
   Instagram and some board sites don't — upload the square/wide image instead;
   the URL is stamped inside it.
-- Search visibility is OFF by default. Turning it on (console) lists the card
+- Search visibility is OFF by default. Turning it on (`set_card_searchable`
+  via `app="console"`, or the web console) lists the card
   on card.aiakiv.com search by title/tags; turning it off later un-lists it
   but the card stays public to anyone with the address.
 - card.aiakiv.com search narrows three ways — text, author nickname, filing
