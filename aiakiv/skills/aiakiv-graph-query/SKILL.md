@@ -3,10 +3,11 @@ name: aiakiv-graph-query
 description: >-
   Write graph queries (Cypher subset) against AiAkiv/MWeft memory with
   query_memory_graph (and query_partner_memory_graph across a link). Use when the
-  user asks HOW memories are connected — shared entities, bridges, threads,
-  timelines, multi-hop paths, "similar but structurally related", entity
-  co-occurrence — or when a search hint block contains a `graph_query`
-  example. Not for plain recall (use search_memory).
+  user asks with the request phrase "ak graph" / "ak 그래프", or otherwise
+  explicitly asks for a graph query over how memories are connected — shared
+  entities, bridges, threads, multi-hop paths, co-occurrence. Lower priority: a
+  search hint block carrying a `graph_query` example. A question without the
+  phrase is plain recall (use search_memory).
 ---
 
 # AiAkiv graph query
@@ -16,33 +17,83 @@ graph. It answers *structure* questions that flat search cannot: which events
 share entities, what bridges two topics, what happened next in a thread, what
 is semantically far but structurally connected.
 
-**When to reach for it** — the question is about connections, paths, shared
-participants, sequences, or "one step beyond these search results". A search
-response may hand you a ready-made query in `hint.graph_query.example` with
-`params` — run it as-is, then adapt.
+**When to reach for it** — first, the request phrase `ak graph` (`ak 그래프`),
+usually followed by a question in the user's own words: the user chose the graph
+query, and the work is translating it faithfully (next section). Also an
+explicit request in other words for a structural walk. Lower priority:
+`hint.graph_query.example` in a search response can be run as-is, then adapted.
 
-**When NOT to** — plain recall ("what did we decide about X") is
-`search_memory`. If `query_memory_graph` is not in the tool list, the server has
-it disabled; say so instead of inventing it.
+**When not to** — a question without the phrase, even about connections, starts
+with `search_memory`; the graph query is not picked on its own initiative. If
+the tool is not in the list, the server has it disabled; say so.
+
+## When the user asks with `ak graph`
+
+1. **Translate.** "Among memories about <name>, the ones about <topic>" is
+   `events(entity: $name, text: $q, k: 20)`; "in the <tag> tag, …" uses `tag:`;
+   "A and B both appear" and "names containing …" are recipes below. Names
+   match exactly (`find_memories_by_entity` shows the stored spelling).
+2. **Run it**, then **show the query that ran and what it means in one line**,
+   next to the answer, in the user's language (for the first example below:
+   the query, then "the 20 BP-135 memories closest in meaning to q").
+3. **Put the completeness markers into the user's words** ("Reading the
+   response"): "could not confirm" and "none" are different answers.
+4. **On a rejection**, read `hint` and `allowed_*` and fix the query once. On
+   "scoped match is off", fall back to `text:` or `entity:` alone and tell the
+   user the new syntax is off on this server.
+5. **The phrase alone** gets three example requests back, like these, adapted to
+   names from the user's memory:
+
+```
+ak 그래프 BP-135 에 연결된 기억 중에서 ChatGPT 가 HOLD 로 판정한 리뷰
+  START a = events(entity: "BP-135", text: $q, k: 20) RETURN a, a.score
+  params {"q": "ChatGPT 가 HOLD 로 판정한 리뷰"}
+
+ak 그래프 security 태그가 붙은 기억 중에서 리뷰어가 HOLD 로 판정한 것
+  START a = events(tag: "security", text: $q, k: 20) RETURN a, a.score
+  params {"q": "리뷰어가 HOLD 로 판정한 것"}
+
+ak 그래프 Leiden 과 같은 기억에 나오는 엔티티 중에서 이름에 leiden 이 들어간 것들, 대소문자 상관없이
+  START a = events(entity: "Leiden") MATCH (a)-[:PARTICIPATED_IN]-(n)
+  WHERE n.name CONTAINS "leiden" RETURN DISTINCT n.name
+```
 
 ## Grammar in one screen
 
 ```
-START a = events(text: $q, k: 5)        ← anchor set is ALWAYS events
-START a = events(entity: "name or id")
+START a = events(text: $q, k: 5)                  ← always events
+START a = events(entity: $name)                   newest of the entity's events
 START a = events(ids: [$id1, $id2])
-MATCH (a)-[s:SHARES {min: 2}]-(b)       ← one or more MATCH clauses
-WHERE b.id <> a.id                       ← optional
+START a = events(tag: $t, k: 20)                  newest in the tag
+START a = events(entity: $name, text: $q, k: 20)  entity's events closest to $q
+START a = events(tag: $t, text: $q, k: 20)        tag's events closest to $q
+MATCH (a)-[s:SHARES {min: 2}]-(b)                 ← zero or more
+WHERE b.id <> a.id                                ← optional
 RETURN b, s.count, s.via ORDER BY s.weight DESC LIMIT 20
 ```
 
-- No `WITH`, no `CREATE`/`SET` (read-only). Conditions that would need `WITH`
-  go into relation params like `{min: 3}`.
-- `$name` params are passed via the `params` argument — always parameterize
-  user text; never inline it.
-- Aggregates (`count(DISTINCT …)`) live in `RETURN`. `cos(a, b)` gives vector
-  cosine between two event variables.
-- Variable-length: `-[n:NEXT*1..3]->` (hop count comes back as `n.hops`).
+- `k` defaults to 5; caps are 20 (`text:`, combined starts) and 200 (`entity:`,
+  `tag:` alone), clamped with a note. A name resolves to at most 20 entities or
+  tags; `start.entities_truncated` / `tags_truncated` says more matched.
+- Behind a server switch: `tag:`, the combined starts, `a.score`, `CONTAINS`,
+  no `MATCH`, arrow filling. Off, they are rejected with "… (scoped match is
+  off)" and a hint.
+- **No `MATCH`** when the start is the answer:
+  `START a = events(entity: $name, text: $q, k: 20) RETURN a, a.score ORDER BY a.score DESC, a.id`.
+- **`a.score`** — the start event's cosine to the start text, not clipped; null
+  without start text and on hop-reached events, nulls last. `RETURN a` omits it.
+- **`WHERE n.name CONTAINS $part`** — `Entity.name` / `Tag.name` only, ignoring
+  case and full-width forms; an all-ASCII piece needs 2 characters, one Hangul
+  or Han character is enough. It filters rows the walk already returned.
+- **Directed** `NEXT`, `MEMBER_OF`, `RESOLVED_BY` take an arrow. A missing one
+  is filled in (with a `notes` line) only when the end labels allow one way, as
+  `(a)-[:MEMBER_OF]-(t)` from an event; event-to-event `NEXT` and `RESOLVED_BY`
+  still need it. A wrong arrow is rejected, not flipped.
+- No `WITH`, no `CREATE`/`SET` (read-only); conditions go in relation params
+  like `{min: 3}`. The user's sentence goes through `params` (`$q`), not inline.
+- Aggregates live in `RETURN`; `cos(a, b)` is the cosine of two event variables.
+  Variable length on `NEXT` and `SHARES` only, 1..3: `-[n:NEXT*1..3]->`
+  (`n.hops`).
 
 ## Relations (the whole vocabulary)
 
@@ -51,11 +102,12 @@ RETURN b, s.count, s.via ORDER BY s.weight DESC LIMIT 20
 | `SHARES {min, min_w}` | event–event | share ≥min entities; carries `s.count`, `s.weight` (rarity-weighted), `s.via` (the shared entities = bridges) |
 | `SIMILAR {k, min}` | event–event | vector nearest neighbours; `f.cos` |
 | `FAR {max}` | event–event | vector distance filter (cos < max) — pair with SHARES for "connected but semantically far" |
-| `NEXT` | event→event | conversation/thread order (directional, supports `*1..n`) |
-| `PARTICIPATED_IN` | event–entity | membership; walk event→entity→event for co-participation |
-| `MEMBER_OF` | event–tag | category/tag membership |
-| `CONNECTED` | entity–entity | stored entity co-occurrence edge |
-| `SAME_AS` | entity–entity | stored alias edge (exact identity, not fuzzy match) |
+| `NEXT {source}` | event→event | conversation/thread order (directional, supports `*1..3`); `n.source` |
+| `RESOLVED_BY {relation}` | event→event | plan or expectation → the event that realized it (directional); `relation`: `realization`; `r.asserted_at`; revoked links excluded |
+| `PARTICIPATED_IN` | entity–event | membership; walk event→entity→event for co-participation |
+| `MEMBER_OF {kind}` | event→tag | tag membership (directional); `kind` is `contains` or `refers` |
+| `CONNECTED` | entity–entity | stored entity co-occurrence edge; `c.event_count` |
+| `SAME_AS` | entity–entity | stored alias edge (exact identity, not fuzzy match); `x.confidence` |
 
 ## Recipes
 
@@ -68,12 +120,22 @@ RETURN b, s.count, s.via ORDER BY s.weight DESC LIMIT 20
   `START a = events(ids: $ids) MATCH (a)-[n:NEXT*1..3]->(b) RETURN b.id, b.summary, n.hops ORDER BY n.hops LIMIT 30`
 - **Entity co-participation ranking**:
   `START a = events(text: $q, k: 5) MATCH (a)-[:PARTICIPATED_IN]-(e)-[:PARTICIPATED_IN]-(b) WHERE b.id <> a.id RETURN e.name, count(DISTINCT b) AS n ORDER BY n DESC LIMIT 15`
+- **A and B both appear** (no switch needed; default `k` 5 sees only A's five
+  newest events):
+  `START a = events(entity: $a, k: 200) MATCH (a)-[:PARTICIPATED_IN]-(n {name: $b}) RETURN DISTINCT a`
 
 Rows are projected small (Event → `{id, summary, timestamp, order_index}`);
 open full content with `get_memory_content`.
 
 ## Reading the response, handling refusals
 
+- `start.scoped_mode`: `exact` (every candidate measured) or `filtered_ann` (a
+  large scope searched through the vector index); `start.candidates`:
+  `{count, exact}`; `start.filled: false`: fewer than `k` found within budget,
+  not "the scope ran out". `filled: false` or a names cap adds `stage: start` to
+  `truncated` and sets `partial`.
+- **0 rows plus any of those means "could not confirm"; 0 rows with nothing cut
+  means "none".** `notes` says so too, along with clamps and inferred arrows.
 - `partial` / `truncated` report budget caps — **never silent**. If truncated,
   narrow instead of retrying the same query: fewer anchors (`k`), tighter
   `SHARES {min}` / `FAR {max}`, smaller `LIMIT`.
@@ -92,7 +154,8 @@ has **aliased** (they count as one entity for `PARTICIPATED_IN`/`SHARES`),
 and `SIMILAR`/`FAR` cross by vector. `NEXT`/`MEMBER_OF`/`CONNECTED` stay
 within a side. Returned events carry `side` (`remote` = partner); open remote
 content with `get_partner_memory_content`. Remote budgets are tighter —
-prefer small `k` and `LIMIT` first. Not every server exposes this tool; if
+prefer small `k` and `LIMIT` first. The new syntax works here too; `CONTAINS`
+sees the home spelling of aliased names. Not every server exposes this tool; if
 absent, only home queries are available.
 
 ## Probe: relation modes and expansion rounds
