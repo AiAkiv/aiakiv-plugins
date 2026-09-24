@@ -33,11 +33,17 @@ the tool is not in the list, the server has it disabled; say so.
    `events(entity: $name, text: $q, k: 20)`; "in the <tag> tag, …" uses `tag:`;
    "A and B both appear" and "names containing …" are recipes below. Names
    match exactly (`find_memories_by_entity` shows the stored spelling).
+   A request for "all", "every" or "the full list" is not a closeness ranking:
+   it takes the listing path — `tag:` or `entity:` alone with `k: 200`, an
+   explicit `LIMIT`, and a `CONTAINS` or name filter when the request names
+   one. If `start.hub` is still `true`, the answer says there are more than 200
+   and not all of them were seen.
 2. **Run it**, then **show the query that ran and what it means in one line**,
    next to the answer, in the user's language (for the first example below:
-   the query, then "the 20 BP-135 memories closest in meaning to q").
+   the query, then "the 20 BP-7 memories closest in meaning to q").
 3. **Put the completeness markers into the user's words** ("Reading the
-   response"): "could not confirm" and "none" are different answers.
+   response"): "could not confirm" and "none" are different answers, and
+   "the closest 20 of 224" is not "all 224".
 4. **On a rejection**, read `hint` and `allowed_*` and fix the query once. On
    "scoped match is off", fall back to `text:` or `entity:` alone and tell the
    user the new syntax is off on this server.
@@ -45,18 +51,21 @@ the tool is not in the list, the server has it disabled; say so.
    names from the user's memory:
 
 ```
-ak 그래프 BP-135 에 연결된 기억 중에서 ChatGPT 가 HOLD 로 판정한 리뷰
-  START a = events(entity: "BP-135", text: $q, k: 20) RETURN a, a.score
-  params {"q": "ChatGPT 가 HOLD 로 판정한 리뷰"}
+ak 그래프 BP-7 에 연결된 기억 중에서 요금제 가격을 정한 논의
+  START a = events(entity: "BP-7", text: $q, k: 20) RETURN a, a.score
+  params {"q": "요금제 가격을 정한 논의"}
 
-ak 그래프 security 태그가 붙은 기억 중에서 리뷰어가 HOLD 로 판정한 것
-  START a = events(tag: "security", text: $q, k: 20) RETURN a, a.score
-  params {"q": "리뷰어가 HOLD 로 판정한 것"}
+ak 그래프 ops 태그 안의 기억에서 백업 복구를 연습한 기록
+  START a = events(tag: "ops", text: $q, k: 20) RETURN a, a.score
+  params {"q": "백업 복구를 연습한 기록"}
 
-ak 그래프 Leiden 과 같은 기억에 나오는 엔티티 중에서 이름에 leiden 이 들어간 것들, 대소문자 상관없이
-  START a = events(entity: "Leiden") MATCH (a)-[:PARTICIPATED_IN]-(n)
-  WHERE n.name CONTAINS "leiden" RETURN DISTINCT n.name
+ak 그래프 Redis 와 같은 기억에 나오는 엔티티 중 이름에 cache 가 들어간 것 전부
+  START a = events(entity: "Redis", k: 200) MATCH (a)-[:PARTICIPATED_IN]-(n)
+  WHERE n.name CONTAINS "cache" RETURN DISTINCT n.name LIMIT 200
 ```
+
+The third uses `k: 200` because the default `k` 5 walks only the five newest
+Redis memories; `start.hub: true` there means Redis has more than 200.
 
 ## Grammar in one screen
 
@@ -72,9 +81,24 @@ WHERE b.id <> a.id                                ← optional
 RETURN b, s.count, s.via ORDER BY s.weight DESC LIMIT 20
 ```
 
-- `k` defaults to 5; caps are 20 (`text:`, combined starts) and 200 (`entity:`,
-  `tag:` alone), clamped with a note. A name resolves to at most 20 entities or
-  tags; `start.entities_truncated` / `tags_truncated` says more matched.
+- **Three row caps that are not budget cuts** — none of them sets `partial`
+  or `truncated`:
+  - `k` defaults to 5, up to 20 for `text:` and the combined starts and 200 for
+    `entity:` / `tag:` alone, clamped with a note. The combined starts and
+    `tag:` alone set `start.has_more: true` when the scope holds more
+    candidates than came back, with a `notes` line "start: top-k of N
+    candidates; … more exist in scope (not a budget cut)". A `+` after a
+    number means it is a lower bound. When the scope was not fully covered
+    (`filled: false`, a names cap, or the start cut by a statement timeout or
+    the deadline) the "could not confirm" line replaces this one; `has_more`
+    itself is still set.
+  - `start.hub: true` — `entity:` or `tag:` alone found more events than the
+    `k` newest it returned. For `entity:` alone this is the only signal.
+  - Without `LIMIT`, rows stop at 20 (`LIMIT` goes up to 200). With the switch
+    on, `notes` says "rows cut to the default LIMIT 20; add LIMIT to return
+    more"; with it off, the cut is silent.
+- A name resolves to at most 20 entities or tags;
+  `start.entities_truncated` / `tags_truncated` says more matched.
 - Behind a server switch: `tag:`, the combined starts, `a.score`, `CONTAINS`,
   no `MATCH`, arrow filling. Off, they are rejected with "… (scoped match is
   off)" and a hint.
@@ -129,14 +153,22 @@ open full content with `get_memory_content`.
 
 ## Reading the response, handling refusals
 
-- `start.scoped_mode`: `exact` (every candidate measured) or `filtered_ann` (a
-  large scope searched through the vector index); `start.candidates`:
-  `{count, exact}`; `start.filled: false`: fewer than `k` found within budget,
-  not "the scope ran out". `filled: false` or a names cap adds `stage: start` to
-  `truncated` and sets `partial`.
+- `start.scoped_mode`: `exact` means every candidate was measured and only the
+  top `k` returned; `filtered_ann` means a large scope was searched through the
+  vector index. `start.candidates`: `{count, exact}` (with `exact: false` the
+  count is a lower bound); `start.filled: false`: fewer than `k` found within
+  budget, not "the scope ran out". `filled: false`, a names cap, or a start
+  cut by a statement timeout or the deadline adds a start entry to `truncated`
+  and sets `partial`.
 - **0 rows plus any of those means "could not confirm"; 0 rows with nothing cut
   means "none".** `notes` says so too, along with clamps and inferred arrows.
-- `partial` / `truncated` report budget caps — **never silent**. If truncated,
+- **More candidates than rows.** `start.has_more: true` — or, where the server
+  does not send it, `candidates.count` above the rows the start returned —
+  means the scope holds more than came back. `exact` with count 224 and `k` 20
+  is the closest 20 of 224; saying "compared all 224, nothing missing" is
+  wrong. `partial: false` means no budget cut, not "everything was seen".
+- Budget caps (`partial` / `truncated`) are **never silent**; `k`, `hub` and
+  the default `LIMIT` are separate signals (Grammar above). If truncated,
   narrow instead of retrying the same query: fewer anchors (`k`), tighter
   `SHARES {min}` / `FAR {max}`, smaller `LIMIT`.
 - A rejection returns `{error, blocked_by: syntax|grammar|params, hint?,
