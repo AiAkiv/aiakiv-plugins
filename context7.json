@@ -1,4 +1,6 @@
 {
+  "url": "https://context7.com/aiakiv/aiakiv-plugins",
+  "public_key": "pk_1m5P0AFKILde2bgHC60c8",
   "$schema": "https://context7.com/schema/context7.json",
   "projectTitle": "AiAkiv — Shared Memory for AI Agents",
   "description": "AiAkiv (MemoryWeft / MWeft) is a hosted long-term memory that AI agents and teammates share over the Model Context Protocol (MCP). It stores conversation content as a knowledge graph and recalls it across sessions, folders, and AI clients. Docs cover installing/connecting each client, saving and recalling, and the Team -> Project -> Domain model (with per-project personas).",
