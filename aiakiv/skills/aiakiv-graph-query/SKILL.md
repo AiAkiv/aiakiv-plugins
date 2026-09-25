@@ -48,18 +48,18 @@ the tool is not in the list, the server has it disabled; say so.
    "scoped match is off", fall back to `text:` or `entity:` alone and tell the
    user the new syntax is off on this server.
 5. **The phrase alone** gets three example requests back, like these, adapted to
-   names from the user's memory:
+   names from the user's memory and written in the user's language:
 
 ```
-ak 그래프 BP-7 에 연결된 기억 중에서 요금제 가격을 정한 논의
+ak graph among the memories linked to BP-7, the discussion that set plan pricing
   START a = events(entity: "BP-7", text: $q, k: 20) RETURN a, a.score
-  params {"q": "요금제 가격을 정한 논의"}
+  params {"q": "the discussion that set plan pricing"}
 
-ak 그래프 ops 태그 안의 기억에서 백업 복구를 연습한 기록
+ak graph inside the ops tag, the records of a backup restore drill
   START a = events(tag: "ops", text: $q, k: 20) RETURN a, a.score
-  params {"q": "백업 복구를 연습한 기록"}
+  params {"q": "the records of a backup restore drill"}
 
-ak 그래프 Redis 와 같은 기억에 나오는 엔티티 중 이름에 cache 가 들어간 것 전부
+ak graph every entity that shares a memory with Redis and has cache in its name
   START a = events(entity: "Redis", k: 200) MATCH (a)-[:PARTICIPATED_IN]-(n)
   WHERE n.name CONTAINS "cache" RETURN DISTINCT n.name LIMIT 200
 ```
