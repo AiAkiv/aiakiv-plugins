@@ -71,6 +71,10 @@ Changing the header value re-triggers OAuth (a login prompt, not a failure). For
 friction-free per-folder switching, the console can issue a static project-bound
 key instead — see the AiAkiv console → project tab.
 
+If the user turns Main off in the console, every connection that follows Main (no
+project header and no project-bound key) refuses all tools until Main is turned
+back on; folders pinned with the header keep working.
+
 ## 5. Trust & privacy
 
 AiAkiv is a **hosted** service: saved content leaves the machine and is stored on

@@ -53,6 +53,10 @@ they send no header and follow whatever project is **Main**.
 > Order: **create the project → set it as Main → connect** (an app-wide connection
 > follows Main, so once you connect it already points at the right project).
 
+If you use both kinds together, you can turn Main **off** in the console so that only
+your folder clients reach AiAkiv: a global connection that follows Main (signed in, not
+using a project-bound API key) then refuses every tool until you turn Main back on.
+
 ## Config snippets (folder clients)
 
 JSON — `.mcp.json` (Claude Code / Claude Desktop) or `.cursor/mcp.json` (Cursor):
