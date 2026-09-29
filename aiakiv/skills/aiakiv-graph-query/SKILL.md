@@ -31,8 +31,8 @@ the tool is not in the list, the server has it disabled; say so.
 
 1. **Translate.** "Among memories about <name>, the ones about <topic>" is
    `events(entity: $name, text: $q, k: 20)`; "in the <tag> tag, …" uses `tag:`;
-   "A and B both appear" and "names containing …" are recipes below. Names
-   match exactly (`find_memories_by_entity` shows the stored spelling).
+   "A or B", "A and B both appear" and "names containing …" are recipes below.
+   Names match exactly (`find_memories_by_entity` shows the stored spelling).
    A request for "all", "every" or "the full list" is not a closeness ranking:
    it takes the listing path — `tag:` or `entity:` alone with `k: 200`, an
    explicit `LIMIT`, and a `CONTAINS` or name filter when the request names
@@ -45,8 +45,9 @@ the tool is not in the list, the server has it disabled; say so.
    response"): "could not confirm" and "none" are different answers, and
    "the closest 20 of 224" is not "all 224".
 4. **On a rejection**, read `hint` and `allowed_*` and fix the query once. On
-   "scoped match is off", fall back to `text:` or `entity:` alone and tell the
-   user the new syntax is off on this server.
+   "scoped match is off", fall back to `text:` or `entity:` alone (for "both",
+   the older `MATCH` recipe below, with its limit said) and tell the user the
+   new syntax is off on this server.
 5. **The phrase alone** gets three example requests back, like these, adapted to
    names from the user's memory and written in the user's language:
 
@@ -76,6 +77,9 @@ START a = events(ids: [$id1, $id2])
 START a = events(tag: $t, k: 20)                  newest in the tag
 START a = events(entity: $name, text: $q, k: 20)  entity's events closest to $q
 START a = events(tag: $t, text: $q, k: 20)        tag's events closest to $q
+START a = events(entity: ["A", "B"], k: 200)      events with A or B (tag: [...] too)
+START a = events(entity_all: ["A", "B"], k: 200)  events with A and B (tag_all: too)
+START a = events(entity: $n, tag: $t, text: $q)   in both scopes, closest to $q
 MATCH (a)-[s:SHARES {min: 2}]-(b)                 ← zero or more
 WHERE b.id <> a.id                                ← optional
 RETURN b, s.count, s.via ORDER BY s.weight DESC LIMIT 20
@@ -83,25 +87,35 @@ RETURN b, s.count, s.via ORDER BY s.weight DESC LIMIT 20
 
 - **Three row caps that are not budget cuts** — none of them sets `partial`
   or `truncated`:
-  - `k` defaults to 5, up to 20 for `text:` and the combined starts and 200 for
-    `entity:` / `tag:` alone, clamped with a note. The combined starts and
-    `tag:` alone set `start.has_more: true` when the scope holds more
+  - `k` defaults to 5, up to 20 for `text:` and any scope with `text:`, and 200
+    for a scope without it (`entity:` / `tag:` alone, lists, `_all`), clamped
+    with a note. The 20 and 200 are defaults; a server can set other caps, and
+    `budget.caps` in the response shows the ones in force (Reading the
+    response). The scoped starts other than `entity:` alone set
+    `start.has_more: true` when the scope holds more
     candidates than came back, with a `notes` line "start: top-k of N
     candidates; … more exist in scope (not a budget cut)". A `+` after a
     number means it is a lower bound. When the scope was not fully covered
     (`filled: false`, a names cap, or the start cut by a statement timeout or
     the deadline) the "could not confirm" line replaces this one; `has_more`
     itself is still set.
-  - `start.hub: true` — `entity:` or `tag:` alone found more events than the
+  - `start.hub: true` — a scope without `text:` found more events than the
     `k` newest it returned. For `entity:` alone this is the only signal.
   - Without `LIMIT`, rows stop at 20 (`LIMIT` goes up to 200). With the switch
     on, `notes` says "rows cut to the default LIMIT 20; add LIMIT to return
     more"; with it off, the cut is silent.
 - A name resolves to at most 20 entities or tags;
   `start.entities_truncated` / `tags_truncated` says more matched.
-- Behind a server switch: `tag:`, the combined starts, `a.score`, `CONTAINS`,
-  no `MATCH`, arrow filling. Off, they are rejected with "… (scoped match is
-  off)" and a hint.
+- **Name scopes**: a scope is an AND of parts, a part is an OR of names. A list
+  is one part (any name); `entity_all:` / `tag_all:` make each name its own part
+  and take a list only; `entity:` with `tag:` needs both. That is the only
+  shape: no brackets, no negation, and no "entity or tag" choice. A list can
+  come from `params` (`entity_all: $names`). Up to 10 names per `START`, more is
+  rejected, not cut; an empty list, a repeated name, a non-string, or mixing
+  with `ids:` is rejected too.
+- Behind a server switch: `tag:`, the combined starts, name lists and `_all`,
+  `a.score`, `CONTAINS`, no `MATCH`, arrow filling. Off, they are rejected with
+  "… (scoped match is off)" and a hint.
 - **No `MATCH`** when the start is the answer:
   `START a = events(entity: $name, text: $q, k: 20) RETURN a, a.score ORDER BY a.score DESC, a.id`.
 - **`a.score`** — the start event's cosine to the start text, not clipped; null
@@ -144,9 +158,15 @@ RETURN b, s.count, s.via ORDER BY s.weight DESC LIMIT 20
   `START a = events(ids: $ids) MATCH (a)-[n:NEXT*1..3]->(b) RETURN b.id, b.summary, n.hops ORDER BY n.hops LIMIT 30`
 - **Entity co-participation ranking**:
   `START a = events(text: $q, k: 5) MATCH (a)-[:PARTICIPATED_IN]-(e)-[:PARTICIPATED_IN]-(b) WHERE b.id <> a.id RETURN e.name, count(DISTINCT b) AS n ORDER BY n DESC LIMIT 15`
-- **A and B both appear** (no switch needed; default `k` 5 sees only A's five
-  newest events):
-  `START a = events(entity: $a, k: 200) MATCH (a)-[:PARTICIPATED_IN]-(n {name: $b}) RETURN DISTINCT a`
+- **A and B both appear**: filters before `k` is taken, so a large A does not
+  hide the overlap:
+  `START a = events(entity_all: [$a, $b], k: 200) RETURN a LIMIT 200`
+  Name and tag together: `events(entity: $a, tag: $t, k: 200)`. Add `text: $q`
+  (then `k` up to 20) to rank the overlap by meaning.
+- **A or B**: `START a = events(entity: [$a, $b], k: 200) RETURN a LIMIT 200`
+- **Both, switch off** (older way): it keeps only A's newest 200, so an overlap
+  further back is missed; say so when `start.hub` is `true`:
+  `START a = events(entity: $a, k: 200) MATCH (a)-[:PARTICIPATED_IN]-(n {name: $b}) RETURN DISTINCT a LIMIT 200`
 
 Rows are projected small (Event → `{id, summary, timestamp, order_index}`);
 open full content with `get_memory_content`.
@@ -158,10 +178,28 @@ open full content with `get_memory_content`.
   vector index. `start.candidates`: `{count, exact}` (with `exact: false` the
   count is a lower bound); `start.filled: false`: fewer than `k` found within
   budget, not "the scope ran out". `filled: false`, a names cap, or a start
-  cut by a statement timeout or the deadline adds a start entry to `truncated`
-  and sets `partial`.
+  cut by a statement timeout or the deadline (`{stage: "deadline", at:
+  "start"}`) adds a start entry to `truncated` and sets `partial`.
 - **0 rows plus any of those means "could not confirm"; 0 rows with nothing cut
   means "none".** `notes` says so too, along with clamps and inferred arrows.
+- **Names not found.** `start.unresolved` lists the scope names that matched
+  nothing as `{kind, name}`, e.g. `[{"kind": "tag", "name": "X"}]`. Entity 'X'
+  and tag 'X' are different names: if the entity is found and the tag is not,
+  only the tag is listed. Say "no tag is stored under that spelling", not "X
+  does not exist"; it may exist as the other kind. In an any-of part where
+  another name was found, the miss shows only in `unresolved`, with no note.
+  If a whole part found none of its names, the result is 0 rows with a note
+  naming only the names of the part(s) that found nothing, e.g. "scope: no
+  match for entity 'B', tag 'x' - a part of the scope found none of its names,
+  so the scope has no rows": say the name is not stored under that spelling
+  for that kind, and check it with `find_memories_by_entity` before calling it
+  none.
+- **Caps in force.** With the new syntax on, `budget.caps` carries
+  `{start_k_max, start_entity_max, start_scoped_k_max, limit_max}`, the caps
+  this server applies (`k` for `text:` and the number of `ids:`, `k` for a
+  scope without text, `k` for a scope with text, `LIMIT`). The 20 and 200 above are
+  defaults; when telling the user a limit ("only the newest 200"), use the
+  number from `caps`. `LIMIT` stays at most 200.
 - **More candidates than rows.** `start.has_more: true` — or, where the server
   does not send it, `candidates.count` above the rows the start returned —
   means the scope holds more than came back. `exact` with count 224 and `k` 20
