@@ -48,8 +48,8 @@ There are two ways to read the memo team and the style team.
    for memos, `search_work_memory` and `get_work_memory` for confirmed content
    (`team` `work`) and the creator's style (`team` `technique`). They search
    and read the full text.
-2. **Links**, only when this connection is bound to the work team
-   (`get_work` reports `session_in_work: true`). The work team reads the memo
+2. **Links**, only when this connection is bound to the work team (see
+   "Is this connection the work team?" below). The work team reads the memo
    team and the style team through links. Pass the `link_id` to
    `search_partner_memory`, `find_partner_memory_connections` or
    `query_partner_memory_graph`. Use links to follow connections between
@@ -65,12 +65,30 @@ to the same partner tools. If `links` is missing, call
 `partner_org_id` with the `scratch_org_id` in a `search_scratch` response. If
 you cannot tell which link is which, use the app actions.
 
+Is this connection the work team? Check before the first link tool call,
+not after. Either sign is enough; without one, do not use the link tools for
+Contents at all.
+
+- `get_save_target` reports `binding` `folder` or `api-key` and a `project`
+  whose name ends in `:canonical` (the work's own team, for example
+  `contents:myproject:canonical`). A `binding` of `main`, or a project with
+  any other name (another app's project, the user's own project, a style team
+  ending in `:technique`), is not the work team.
+- `get_work(doc_id=...)` reports `session_in_work: true`. The app decides
+  this from the session itself, so it is the final word when the two
+  disagree.
+
+Most conversations reach Contents through `run_aiakiv_app_action` from a
+connection that follows Main or sits on some other project. There the work
+team's links are not this connection's links: `list_partner_links` shows
+other things, and `search_partner_memory` with a `link_id` from `get_work`
+fails or reads the wrong team. Use the app actions there.
+
 Which way: on a connection bound to the work team, try links first for memos
-and style. Otherwise (a connection that follows Main, or `session_in_work:
-false`) use the app actions. If a link tool returns an error or there is no
-link, go back to the app actions. The app actions work whichever project the
-connection follows, so do not ask the creator to change the connection.
-Leaving a memo is always `add_scratch`; links never write.
+and style. Otherwise use the app actions. If a link tool returns an error or
+there is no link, go back to the app actions. The app actions work whichever
+project the connection follows, so do not ask the creator to change the
+connection. Leaving a memo is always `add_scratch`; links never write.
 
 ## Attaching other memory to the work
 
@@ -97,7 +115,7 @@ the whole team, so everything in that team's memory becomes readable from the
 work; if the user wants a narrower scope, suggest a separate team for it.
 
 Attached memory is read only through links, so it needs a connection bound to
-the work team (`session_in_work: true`). On a connection that follows Main
+the work team (the check above). On a connection that follows Main
 there is no app action that reads it; tell the user to connect through the
 working folder from the advanced settings on the "AI connection" screen.
 `remove_work_source` detaches; the memo team and style team links that the
