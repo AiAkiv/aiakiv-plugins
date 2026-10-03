@@ -30,6 +30,11 @@ onboarding, share cards, graph queries, and partner links.
 - **`aiakiv-save-and-recall` skill** — writing a memory that stays findable
   (summary and entity spelling), what to do when a save is rejected, and how to
   read the related-memory signal that search responses carry.
+- **`aiakiv-contents` skill** - the entry point for AiAkiv Contents
+  (`run_aiakiv_app_action(app="contents")`): read the app's `describe` first,
+  pick the work, find memos and style through app actions or links, and the
+  mistakes to avoid (AI edits are drafts, no `save_memory` for the work's
+  content). The rules themselves stay in the app's `describe`.
 
 ## Install
 

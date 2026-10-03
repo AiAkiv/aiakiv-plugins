@@ -9,6 +9,9 @@ The tool descriptions state the contract. This skill covers the parts that
 decide whether a saved memory is findable a month later, and what to do when
 a call is rejected.
 
+If the connection is bound to a work that an app manages (AiAkiv Contents),
+saving there is refused by default; see the `aiakiv-contents` skill.
+
 ## 1. The summary is the retrieval surface
 
 Searches rank against the summary, not the content. Write it with the words a
