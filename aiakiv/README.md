@@ -34,7 +34,8 @@ onboarding, share cards, graph queries, and partner links.
   (`run_aiakiv_app_action(app="contents")`): read the app's `describe` first,
   pick the work, find memos and style through app actions or links, and the
   mistakes to avoid (AI edits are drafts, no `save_memory` for the work's
-  content). The rules themselves stay in the app's `describe`.
+  content, facts and world lines live on the fact screens, not in the Studio
+  tree). The rules themselves stay in the app's `describe`.
 
 ## Install
 

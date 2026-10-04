@@ -131,6 +131,11 @@ app created with the work cannot be detached.
   the account permission `app-memory:write` is off, which only the user can
   change). Do not use `update_memory` to edit memory the app published either:
   the app's publish records and review marks would stop matching it.
+- **Facts and world lines are not in the Studio tree.** Do not send the
+  creator to Studio to find or confirm one. The creator reads, edits, deletes
+  and confirms facts on the fact list and fact view screens, which the
+  `facts` topic of `describe` names. When asked to confirm a fact, point to
+  the fact view; the AI cannot confirm.
 - **Ideas go to memos** with `add_scratch`. The creator sees them as memos
   ("메모" on the Korean screens), so use that word with the creator.
 - **Style notes are the one place for `save_memory`.** Building up style
