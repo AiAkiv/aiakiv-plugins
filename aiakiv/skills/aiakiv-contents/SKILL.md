@@ -12,9 +12,11 @@ description: >-
   the work's memos or style memory, including through links from the work
   team; wants to attach another team's memory (their own brainstorming team,
   someone else's team, a public org) to the work or detach it; wants to set
-  the value basis of the work or the narrative stance of a part; says "ak save"
-  while connected to a Contents work; or is about to call
-  run_aiakiv_app_action with app="contents".
+  the value basis of the work or the narrative stance of a part; wants beats
+  extracted from a scene's prose, or a scene written or rendered in another
+  language with the work's form settings; says "ak save" while connected to a
+  Contents work; or is about to call run_aiakiv_app_action with
+  app="contents".
 ---
 
 # AiAkiv Contents
@@ -31,9 +33,10 @@ never from memory.
 1. Read the overview:
    `run_aiakiv_app_action(app="contents", action="describe", data={"topic": "overview"})`.
 2. Read one more topic that fits the task, with the same call and another
-   `topic` (writing a scene: `tree`; facts and world lines: `facts`). The
-   topics today are `overview`, `tree`, `slots`, `settings`, `facts`, `time`,
-   `links`, `assets`, `lang`, `memory`, `review`, `names`, `screens`,
+   `topic` (writing a scene: `tree`; facts and world lines: `facts`; beats:
+   `beats`; another language or style: `lang`). The topics today are
+   `overview`, `tree`, `slots`, `settings`, `facts`, `time`, `links`,
+   `assets`, `lang`, `beats`, `memory`, `review`, `names`, `screens`,
    `errors`. The list and what each topic says come from `describe`; if they
    differ from this line, `describe` wins.
 3. Pick the work with `get_work`. Called without `doc_id` it lists the user's
@@ -143,6 +146,76 @@ The `slots` topic of `describe` has the wording.
   the `turn` values; a part's narrative stance does not break it. Fill in
   `turn` and the basis; do not draw or compute the line.
 
+## Beats
+
+A body node (kind `body`) holds the prose in `description`. Beats (pack
+`beat_script`) are a language-neutral script of that prose, which the AI
+extracts into the body's `slots.beats`, a list of beat objects. The app
+stores, counts and publishes beats and notices when the prose has moved on;
+it does not judge them. Read the `beats` topic of `describe` before the
+first extraction; the fields, `think_modes`, `rhythms` and `relation_axes`
+come from there (`novel.beat_fields`, `novel.relation_axes`).
+
+- Extract in the draft, right after writing or fixing the prose and before
+  the creator confirms.
+- Call `get_node` on the scene, not on the body node. Its `body` (and each
+  entry of `bodies[]`) carries `node_id`, `prose_hash`, `beats_count` and
+  `beats_stale`.
+- Then call `update_node` on that body `node_id` with `fields.slots` holding
+  `beats` and `beats_from: {"prose_hash": ...}`, echoing the `prose_hash`
+  you read exactly; never compute a hash. `fields.slots` overwrites the whole
+  object, so send the body's other slots (such as `source`) back with it.
+- Write `act` and `say.content` plainly, in the work's default language.
+- `say.relation` is a closed vocabulary, tokens joined by spaces, at most one
+  per axis, any order, possibly empty: power `up|level|down` (speaker
+  relative to listener), distance `close|neutral|far`, formality
+  `formal|plain|casual`, for example `"down far formal"`. An unknown token,
+  or two on one axis, is `invalid_data`. Write the relationship, not a speech
+  style; `get_node`'s `language.relation_map` says how a language renders it.
+- Check the round trip: unfold the beats into a flat paraphrase and compare
+  with the prose. If an event is missing or invented, or something withheld
+  leaks, leave `add_review` with `kind: "beats_drift"` on the body node.
+- `beats_missing`, `beats_stale` and `beats_count` appear as suggestions in
+  the confirm preview and never block confirming. If confirmed prose is
+  edited later, the app opens a `beats_stale` review item; extracting again
+  in that same new version closes it.
+- Do not rewrite the prose from the beats; the prose is canonical. Do not
+  open a new version of a confirmed body only to add beats; extract in the
+  next version. Do not translate from another language's body alone; the
+  source is the author-language prose plus its beats.
+
+## Writing in another language and form settings
+
+Style lives on form settings: `kind: "setting"` with `facet: "form"`. Only a
+form setting takes `lang` (`payload.lang` in `add_node`, `fields.lang` in
+`update_node`). Empty means every language; a value limits the setting to
+bodies in that language. The `lang` topic of `describe` has the rules.
+
+- The optional style slots (pack `prose_voice`) are in the `settings` topic
+  under `novel.slots_by_facet.form`: `register`, `dialogue_convention`,
+  `description_density` (`sparse`, `even`, `dense`), `sense_bias`,
+  `image_system` (key to meaning), `banned_patterns` (regular expressions;
+  one that does not compile is `invalid_data`) and `ending_profile`.
+- Put style on a form setting, never on a scene or a body: at the work root
+  for the whole work, or under a part for that part only.
+- Before writing a body in a language, or translating into it, call
+  `get_node` on the scene with `data.lang` set to that language (left out,
+  it is the body's language for a body node, else the work's default).
+- Read `form` from that response: the merged form settings, with `slots`
+  holding the values, `sources` naming which setting gave each value, and
+  `texts` holding each setting's description, far to near. The nearer
+  ancestor wins; `banned_patterns` are joined rather than overwritten.
+- Read `language`: the language pack brief, with `relation_map`,
+  `rendering_rules`, `typography`, `tells` and `asks`. It is `null` when the
+  app has no pack for that language.
+- Read `continuity.withhold`: what earlier scenes' beats still withhold
+  (the latest five scenes with beats, up to 40 items, `truncated` when cut),
+  so the new prose does not give it away.
+- Two suggestions may appear, and neither blocks: `banned_pattern_hit` when
+  the prose matches a banned pattern (the merged list plus the language
+  pack's defaults), and, for Korean bodies, `relation_mismatch` when dialogue
+  endings and the beats' formality tokens disagree in distribution.
+
 ## Common mistakes
 
 - **Everything the AI creates or edits is a draft.** The creator confirms it
@@ -170,6 +243,11 @@ The `slots` topic of `describe` has the wording.
   placed in story time" among its Gaps on the Flow board. Do not look for,
   ask about or set episodes; an `episode_id` left on an old node is a
   leftover and places nothing.
+- **Style belongs to form settings, not to scenes.** Register, banned
+  patterns and the other style slots go on a form setting; see "Writing in
+  another language and form settings".
+- **Beats never replace prose.** Do not rewrite prose from beats; see
+  "Beats".
 - **Ideas go to memos** with `add_scratch`. The creator sees them as memos
   ("메모" on the Korean screens), so use that word with the creator.
 - **Style notes are the one place for `save_memory`.** Building up style
