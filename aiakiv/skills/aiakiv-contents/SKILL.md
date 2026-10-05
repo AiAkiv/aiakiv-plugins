@@ -16,8 +16,11 @@ description: >-
   extracted from a scene's prose, or a scene written or rendered in another
   language with the work's form settings; wants a confirmed body used as the
   model (an anchor) for the work's style, or asks what a style or beats mark
-  in a response means; says "ak save" while connected to a Contents work; or
-  is about to call run_aiakiv_app_action with app="contents".
+  in a response means; wants to set how a scene is told (its pace,
+  interiority or what it withholds) or who the narrator is, or asks what a
+  narration review such as a POV violation means; says "ak save" while
+  connected to a Contents work; or is about to call run_aiakiv_app_action
+  with app="contents".
 ---
 
 # AiAkiv Contents
@@ -35,7 +38,8 @@ never from memory.
    `run_aiakiv_app_action(app="contents", action="describe", data={"topic": "overview"})`.
 2. Read one more topic that fits the task, with the same call and another
    `topic` (writing a scene: `tree`; facts and world lines: `facts`; beats:
-   `beats`; another language or style: `lang`). The topics today are
+   `beats`; another language or style: `lang`; the narrator or how a scene
+   is told: `settings` and `slots`). The topics today are
    `overview`, `tree`, `slots`, `settings`, `facts`, `time`, `links`,
    `assets`, `lang`, `beats`, `memory`, `review`, `names`, `screens`,
    `errors`. The list and what each topic says come from `describe`; if they
@@ -262,6 +266,49 @@ the `settings` topic of `describe` (`anchor_takes`, `anchor_weights`).
   again. Do not loop on a mark you judge wrong, and do not tell the creator
   the app rejected anything.
 
+## Narration: pace, interiority, withhold and the narrator
+
+Pack `narration` adds how each scene is told and who tells the work; every
+slot is optional. Its tokens are `slots_by_resolution.treatment` in the
+`slots` topic of `describe`; the narrator's are `narrator_persons`,
+`narrator_tenses`, `narrator_intrusions` and `narrator_reliabilities` in
+`settings`.
+
+- Three slots go on the scene (resolution `treatment`). `pace` is telling
+  time against story time (`scene`, `summary`, `stretch`, `ellipsis`,
+  `pause`); it is not `tempo`, which is sentence speed. `interiority` is how a
+  mind is shown. `withhold` is text: what the reader must not yet know in
+  this scene, apart from the beats' sentence-level `withhold`.
+- `narrator` goes on a form setting: `{person, tense, access, attitude,
+  intrusion, reliability}`, every key optional, `attitude` free text.
+  `access` lists the character settings whose minds the narrator may enter:
+  `[]` is nobody (external narration), no key is not decided, and a node that
+  is missing, abandoned or not a character setting is `invalid_data`.
+- The nearer form setting's `narrator` replaces the farther one whole (unlike
+  `banned_patterns` and `anchors`, which join), so to change only the person
+  for one chapter, write the whole object on that chapter's form setting. It
+  is language neutral and usually sits on a form setting without `lang`. As
+  with `anchors`, read the setting first and send its other slots back.
+- Before writing a body, read `narration` from `get_node` on the scene:
+  `pace`, `interiority` and `withhold` (`null` when not set) and `narrator`,
+  the merged value with `source` and `access` as `{node_id, title, state}`.
+  A `missing` state means that setting is gone; tell the creator instead of
+  guessing. The key is absent when the pack is off.
+- Read `continuity.scene_withhold` (earlier scenes' `withhold`, the latest
+  five, oldest first) with `continuity.withhold`, so the new prose gives
+  nothing away. The `lang` topic describes both.
+- Four review kinds, left by the AI with `add_review` on the body node; the
+  app measures none of them (the `review` topic has them):
+  - `pov_violation`: the prose tells the inside of a character outside
+    `narrator.access`. Not `pov_drift`, which is whose eyes see the scene.
+  - `withhold_leak`: the prose reveals a scene's or a continuity `withhold`.
+  - `narrator_tone_drift`: the voice departs from `attitude` or `intrusion`.
+  - `honorific_mismatch`: the relationship changed (beats `say.relation`,
+    settings) but the speech level did not, or the other way round.
+- These are the creator's story decisions. Fill them when the creator states
+  them, or to match a scene you just drafted and say so; they are drafts the
+  creator confirms. When prose leaks a `withhold`, fix the prose, not the slot.
+
 ## Common mistakes
 
 - **Everything the AI creates or edits is a draft.** The creator confirms it
@@ -300,6 +347,15 @@ the `settings` topic of `describe` (`anchor_takes`, `anchor_weights`).
 - **Marks are suggestions, not errors.** A `marks` entry in a body response,
   or a style suggestion in the confirm preview, blocks nothing; fix what is
   worth fixing and move on.
+- **The narrator lives on a form setting, not on a scene.** `narrator` goes
+  on a form setting (`facet: "form"`), and a nearer one replaces the whole
+  object; `pace`, `interiority` and `withhold` go on the scene. See
+  "Narration: pace, interiority, withhold and the narrator".
+- **Withheld things stay withheld.** A scene's `withhold`,
+  `continuity.scene_withhold` and `continuity.withhold` are what the reader
+  must not learn yet; never write them into the prose. When prose leaks one,
+  fix the prose and leave a `withhold_leak` review rather than deleting the
+  slot.
 - **Ideas go to memos** with `add_scratch`. The creator sees them as memos
   ("메모" on the Korean screens), so use that word with the creator.
 - **Style notes are the one place for `save_memory`.** Building up style

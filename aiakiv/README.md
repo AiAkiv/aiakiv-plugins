@@ -38,7 +38,9 @@ onboarding, share cards, graph queries, and partner links.
   tree), beats extracted from a scene's prose, writing or rendering a
   scene in another language with the work's form settings, and anchors (a
   confirmed body the creator names as the style model) with the `marks` a
-  body response carries. The rules themselves stay in the app's `describe`.
+  body response carries, and narration (a scene's `pace`, `interiority` and
+  `withhold`, the `narrator` on a form setting, the four narration reviews).
+  The rules themselves stay in the app's `describe`.
 
 ## Install
 
