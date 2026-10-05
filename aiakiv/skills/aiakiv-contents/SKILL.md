@@ -11,7 +11,8 @@ description: >-
   내 작품 이어서 쓰자", "메모로 남겨 줘", "초안으로 넣어 줘"); wants to search
   the work's memos or style memory, including through links from the work
   team; wants to attach another team's memory (their own brainstorming team,
-  someone else's team, a public org) to the work or detach it; says "ak save"
+  someone else's team, a public org) to the work or detach it; wants to set
+  the value basis of the work or the narrative stance of a part; says "ak save"
   while connected to a Contents work; or is about to call
   run_aiakiv_app_action with app="contents".
 ---
@@ -121,6 +122,27 @@ working folder from the advanced settings on the "AI connection" screen.
 `remove_work_source` detaches; the memo team and style team links that the
 app created with the work cannot be detached.
 
+## Value basis and narrative stance
+
+`slots.value_basis` is one key with two meanings. On the One line (the
+work's top sentence) it is the **Value basis**: what the Value line on the
+Flow board measures, and from whose side (pack `dramaturgy_core`). On a Part
+(resolution `synopsis`) it is the **Narrative stance**: from what standpoint
+that part is told and judged (pack `stance_core`, for every kind of work).
+The `slots` topic of `describe` has the wording.
+
+- Read the value basis, and the part's narrative stance, before you pick a
+  scene's `turn`.
+- `fields.slots` in `update_node` overwrites the whole `slots` object, so
+  read it with `get_node` first and send it back whole.
+- The creator can write both on the "Value basis and narrative stance"
+  screen (`basis` in the `screens` topic), so the AI is not the only way in.
+  Keep the two apart: do not put a part's narrative stance into the One
+  line's `value_basis`, or the work's value basis into a Part's.
+- The Flow board draws the Value line itself, one line per zoom joined from
+  the `turn` values; a part's narrative stance does not break it. Fill in
+  `turn` and the basis; do not draw or compute the line.
+
 ## Common mistakes
 
 - **Everything the AI creates or edits is a draft.** The creator confirms it
@@ -135,7 +157,19 @@ app created with the work cannot be detached.
   creator to Studio to find or confirm one. The creator reads, edits, deletes
   and confirms facts on the fact list and fact view screens, which the
   `facts` topic of `describe` names. When asked to confirm a fact, point to
-  the fact view; the AI cannot confirm.
+  the fact view; the AI cannot confirm. A world line is edited (title,
+  description, calendar), deleted and confirmed on the world line view,
+  which the `facts` topic also names; send the creator there, not to Studio.
+- **Changing a world line's calendar opens review items.** Changing a world
+  line's `slots.calendar` through `update_node` opens a `calendar_changed`
+  item on that line's confirmed facts that have a time, and the response
+  reports how many in `review_items_opened`. Do not change it as a side
+  effect of another edit; tell the creator first what it will open.
+- **There are no episodes.** A scene's place in story time comes from its
+  own `time` or from the facts it `tells`. A scene with neither shows "Not
+  placed in story time" among its Gaps on the Flow board. Do not look for,
+  ask about or set episodes; an `episode_id` left on an old node is a
+  leftover and places nothing.
 - **Ideas go to memos** with `add_scratch`. The creator sees them as memos
   ("메모" on the Korean screens), so use that word with the creator.
 - **Style notes are the one place for `save_memory`.** Building up style
