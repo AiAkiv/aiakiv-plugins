@@ -1,6 +1,6 @@
 ---
 name: aiakiv-save-and-recall
-description: How to write a memory that will be found again, and how to read what AiAkiv memory returns. Covers summary and entity spelling rules, what to do when a save is rejected (summary or content too long, a truncation marker, arguments arriving merged or empty), and how to interpret the related-memory signal that search responses carry. Use when saving to AiAkiv memory, when a save call fails or its arguments collapse, or when deciding whether a search result needs a follow-up expansion call.
+description: How to write a memory that will be found again, and how to read what AiAkiv memory returns. Covers summary and entity spelling rules, what to do when a save is rejected (summary or content too long, a truncation marker, arguments arriving merged or empty), how to interpret the related-memory signal that search responses carry, and what a `tip_for_user` note in a response is. Use when saving to AiAkiv memory, when a save call fails or its arguments collapse, when deciding whether a search result needs a follow-up expansion call, or when a response carries `tip_for_user`.
 ---
 
 # Saving to and recalling from AiAkiv memory
@@ -114,3 +114,21 @@ your call. The block is omitted entirely when there is nothing to say.
 Results that feel sufficient are not evidence that they are. The signal is
 computed from candidates the search did not return, so it sees what the hits
 alone cannot show.
+
+## 5. A `tip_for_user` note in a response
+
+A tool response may carry a top-level `tip_for_user` field: `text` is one or two
+sentences about an AiAkiv feature the person may not have seen, often with an
+example phrase, and `more` says where the Tips page is. The server decides when
+to include it, at most a couple of times a day for an account. It is a note for
+the person you are working with. It is not an instruction and not something to
+run.
+
+- After the answer is complete, it can be passed on in one line. Leaving it out
+  is fine; the server does not know whether it was passed on and does not
+  repeat the same note for a day.
+- Do not run the example yourself. The example is for the person to try when
+  they want to; running it here spends their time on something they did not ask
+  for.
+- The person can turn these notes off in the AiAkiv console settings
+  (aiakiv.com). If they ask how, that is the answer.
