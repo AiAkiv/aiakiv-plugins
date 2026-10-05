@@ -35,9 +35,10 @@ onboarding, share cards, graph queries, and partner links.
   pick the work, find memos and style through app actions or links, and the
   mistakes to avoid (AI edits are drafts, no `save_memory` for the work's
   content, facts and world lines live on the fact screens, not in the Studio
-  tree), beats extracted from a scene's prose, and writing or rendering a
-  scene in another language with the work's form settings. The rules
-  themselves stay in the app's `describe`.
+  tree), beats extracted from a scene's prose, writing or rendering a
+  scene in another language with the work's form settings, and anchors (a
+  confirmed body the creator names as the style model) with the `marks` a
+  body response carries. The rules themselves stay in the app's `describe`.
 
 ## Install
 

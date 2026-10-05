@@ -14,9 +14,10 @@ description: >-
   someone else's team, a public org) to the work or detach it; wants to set
   the value basis of the work or the narrative stance of a part; wants beats
   extracted from a scene's prose, or a scene written or rendered in another
-  language with the work's form settings; says "ak save" while connected to a
-  Contents work; or is about to call run_aiakiv_app_action with
-  app="contents".
+  language with the work's form settings; wants a confirmed body used as the
+  model (an anchor) for the work's style, or asks what a style or beats mark
+  in a response means; says "ak save" while connected to a Contents work; or
+  is about to call run_aiakiv_app_action with app="contents".
 ---
 
 # AiAkiv Contents
@@ -216,6 +217,51 @@ bodies in that language. The `lang` topic of `describe` has the rules.
   pack's defaults), and, for Korean bodies, `relation_mismatch` when dialogue
   endings and the beats' formality tokens disagree in distribution.
 
+## Anchors and the marks in a response
+
+A form setting has an optional slot `anchors` (pack `prose_voice`): a list of
+`{node_id, version, take, weight}`. `node_id` and `version` name a confirmed
+body and its version. `take` lists what to borrow from it: `rhythm`
+(sentence length and rhythm), `endings` (sentence endings), `dialogue`
+(dialogue manner), `description` (description density), `imagery` (figures
+and images); empty means everything. `weight` is `strict` or `loose` (empty
+is `loose`; `strict` makes the checks narrower). Both vocabularies come from
+the `settings` topic of `describe` (`anchor_takes`, `anchor_weights`).
+
+- Write `anchors` only for a body the creator named as the model. Never pick
+  one yourself, not even because it reads well or scored well.
+- Write it with `update_node` on the form setting. `fields.slots` overwrites
+  the whole object, so read the setting with `get_node` first and send its
+  other slots back. Like every AI edit it is a draft the creator confirms. A
+  wrong shape, or the same `node_id` and `version` twice, is `invalid_data`.
+  A nearer form setting's anchors add to a farther one's.
+- Before writing a body, call `get_node` on the scene with `data.lang` (as
+  in the previous section) and read three more keys under `form`.
+- `form.anchors`: each anchor with `state` and, when the app has it, `text`.
+  `current` means that body is confirmed now at that version and `text` is
+  its prose; `archived` means the version has moved on and `text` is that
+  version's confirmed prose; `other_lang` and `missing` carry no text. Learn
+  only what `take` names from the text; never lift its sentences. Long texts
+  are cut (`truncated`), farther settings' anchors first.
+- `form.profile`: statistics of all confirmed bodies in that language except
+  this scene's. It is `null` with fewer than two bodies or too few sentences.
+- `form.baseline`: what the style checks compare against, with `axes` (per
+  axis `anchors`, `profile` or `null`), `stats` and `thresholds`. Read
+  `thresholds` before writing; it says what the app will measure. When
+  `baseline` is `null` no style statistics run; tell the creator the checks
+  start once they pick one anchor (or on their own once enough confirmed
+  content in that language has built up).
+- `add_node` with `kind: "body"`, and `update_node` that sends a body's
+  `description` or `slots`, answer with `marks`: a list of
+  `{kind, level, text}` for that body only. They are the style checks
+  (`banned_pattern_hit`, `uniform_rhythm`, `ending_monotony`,
+  `figure_density`, `adverb_density`) and the beats checks. The `lang` topic
+  of `describe` has each check's condition.
+- Marks are suggestions: they never block confirming and leave no review
+  item. When one points at something worth fixing, fix the prose and send it
+  again. Do not loop on a mark you judge wrong, and do not tell the creator
+  the app rejected anything.
+
 ## Common mistakes
 
 - **Everything the AI creates or edits is a draft.** The creator confirms it
@@ -248,6 +294,12 @@ bodies in that language. The `lang` topic of `describe` has the rules.
   another language and form settings".
 - **Beats never replace prose.** Do not rewrite prose from beats; see
   "Beats".
+- **Anchors are the creator's choice.** Do not write `anchors` for a body the
+  creator did not name, and do not copy an anchor's text; see "Anchors and
+  the marks in a response".
+- **Marks are suggestions, not errors.** A `marks` entry in a body response,
+  or a style suggestion in the confirm preview, blocks nothing; fix what is
+  worth fixing and move on.
 - **Ideas go to memos** with `add_scratch`. The creator sees them as memos
   ("메모" on the Korean screens), so use that word with the creator.
 - **Style notes are the one place for `save_memory`.** Building up style
