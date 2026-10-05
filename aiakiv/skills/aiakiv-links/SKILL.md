@@ -6,7 +6,8 @@ description: >-
   memory with a partner's, mentions a link or partner org, or when a probe
   candidate carries side=remote. Covers choosing between search_partner_memory,
   find_partner_memory_connections and query_partner_memory_graph, reading results, and what each error reason
-  means.
+  means. Also covers public attaches (public memory attached to the user's
+  team, listed under public_attaches with __public: ids).
 ---
 
 # AiAkiv links (partner-org memory)
@@ -32,6 +33,29 @@ flight at once. Two link tools issued in the same batch — the habit that serve
 you well everywhere else — means the second returns `error: busy` without
 running, even on a completely idle server. Await each call before starting the
 next; `list_partner_links` is local and does not count.
+
+## Public attaches (`public_attaches`)
+
+`list_partner_links` also returns `public_attaches`: public memory the user's
+team attached to itself in the console (team "Links" page, "Public attach"
+section). There is no contract and no partner on the other side. A public org
+is open to read anyway; the attach only adds name bridges (aliases) so walks
+and graph queries can cross into it. Each row has `kind: "public"`, a
+`link_id` of the form `__public:<org_id>`, `partner_name`, `usable`,
+`blocked_reason` and `alias_count`.
+
+- A `usable` public attach works in the same four tools with that `link_id`,
+  exactly like a link. Results carry `side: "remote"` the same way, and the
+  same rule applies: keep them labelled as the public org's, not the user's.
+- The section comes back to **every member**, even though the link contract
+  list is owner-only. `links: []` with `links_unavailable_reason:
+  "caller_not_owner"` and a `note` means the user is not the team owner, not
+  that nothing is readable: use the public attaches that are listed.
+- `blocked_reason: "attach_not_enabled"`, or a `__public:` id that is not
+  listed, means the attach is off or the org is no longer public. Turning it
+  on is a console action by the team owner; do not retry.
+- `alias_count: 0` means searches and bodies still work but walks and graph
+  queries stay home-only (no bridge). Say so instead of reporting absence.
 
 ## Which tool for which question
 
@@ -73,6 +97,8 @@ memory failed:
     provide" group) is one their org **provides**, and its refusal is
     `principal_not_active`. Say that it opens their memory outward rather than
     sending them to fix a direction.
+- `attach_not_enabled` — a `__public:` id whose attach is off, or whose org is
+  no longer public (see "Public attaches" above). Owner/console action.
 - `contract_version_too_old` — both owners must re-consent;
   `list_partner_links` → `reconsent` shows who is missing.
 - `budget_exceeded` — the remote row/time budget ran out mid-walk. Narrow the
