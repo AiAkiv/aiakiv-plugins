@@ -18,9 +18,10 @@ description: >-
   model (an anchor) for the work's style, or asks what a style or beats mark
   in a response means; wants to set how a scene is told (its pace,
   interiority or what it withholds) or who the narrator is, or asks what a
-  narration review such as a POV violation means; says "ak save" while
-  connected to a Contents work; or is about to call run_aiakiv_app_action
-  with app="contents".
+  narration review such as a POV violation means; wants scenes like the one
+  being planned or written found in the creator's style memory (cases); says
+  "ak save" while connected to a Contents work; or is about to call
+  run_aiakiv_app_action with app="contents".
 ---
 
 # AiAkiv Contents
@@ -39,7 +40,8 @@ never from memory.
 2. Read one more topic that fits the task, with the same call and another
    `topic` (writing a scene: `tree`; facts and world lines: `facts`; beats:
    `beats`; another language or style: `lang`; the narrator or how a scene
-   is told: `settings` and `slots`). The topics today are
+   is told: `settings` and `slots`; cases of similar scenes: `memory`). The
+   topics today are
    `overview`, `tree`, `slots`, `settings`, `facts`, `time`, `links`,
    `assets`, `lang`, `beats`, `memory`, `review`, `names`, `screens`,
    `errors`. The list and what each topic says come from `describe`; if they
@@ -309,6 +311,32 @@ slot is optional. Its tokens are `slots_by_resolution.treatment` in the
   them, or to match a scene you just drafted and say so; they are drafts the
   creator confirms. When prose leaks a `withhold`, fix the prose, not the slot.
 
+## Cases from the style memory
+
+`get_node` on a scene, or on a scene's body node, returns `memory`:
+`{case_query, medium, lang, tool, how}`. The app built `case_query` from the
+scene's slots, title and `done_when`, with the same function that wrote the
+summary of every case in the style team, so the two share one vocabulary.
+The `memory` topic of `describe` has the recipe ("사례 찾기", finding cases).
+
+- Search when making a scene plan (after reading the arc with `get_node`,
+  before `add_node` with `kind: "plan"`) and again before writing a body.
+- Pass `case_query` verbatim as `query` to `search_work_memory(doc_id,
+  query=..., team="technique")`, then read the top three hits with
+  `get_work_memory(doc_id, event_id, team="technique")`. `how` says the same
+  in one sentence; if it differs from this line, `how` wins.
+- A case is an analysis block (where the scene enters, what it withholds,
+  the beat order, the slot values) followed by the text of a scene from one
+  of the creator's own works. Take its structure; never copy its sentences.
+- `lang` is not in the query: cases are shared across languages, so a scene
+  written in English still finds Korean cases.
+- No `memory` key above a scene or on a setting, a `null` `case_query`, zero
+  hits, or `memory_unavailable` (`reason` `no_binding`, `no_session` or
+  `read_failed`) all mean: write on without cases, and do not ask the creator
+  to change the connection.
+- On a connection bound to the work team, the same `case_query` works as the
+  `query` of `search_partner_memory` with `links.style.link_id`.
+
 ## Common mistakes
 
 - **Everything the AI creates or edits is a draft.** The creator confirms it
@@ -356,6 +384,13 @@ slot is optional. Its tokens are `slots_by_resolution.treatment` in the
   must not learn yet; never write them into the prose. When prose leaks one,
   fix the prose and leave a `withhold_leak` review rather than deleting the
   slot.
+- **Do not write your own case query.** Use `memory.case_query` unchanged.
+  The app built it with the function that wrote the cases' summaries, so a
+  reworded or translated query misses them.
+- **No cases is not a blocker.** A missing `memory` key, a `null` query,
+  `memory_unavailable` or zero hits all mean "write without cases". Do not
+  stop, do not ask the creator to bind or switch anything, and do not invent
+  a case.
 - **Ideas go to memos** with `add_scratch`. The creator sees them as memos
   ("메모" on the Korean screens), so use that word with the creator.
 - **Style notes are the one place for `save_memory`.** Building up style
