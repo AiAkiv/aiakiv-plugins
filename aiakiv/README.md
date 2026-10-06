@@ -41,8 +41,9 @@ onboarding, share cards, graph queries, and partner links.
   body response carries, and narration (a scene's `pace`, `interiority` and
   `withhold`, the `narrator` on a form setting, the four narration reviews),
   and cases of similar scenes found with the query the app builds
-  (`get_node.memory.case_query`). The rules themselves stay in the app's
-  `describe`.
+  (`get_node.memory.case_query`), and the process log (the memo team's
+  `:process` project, where the work process is kept with `save_memory`).
+  The rules themselves stay in the app's `describe`.
 
 ## Install
 

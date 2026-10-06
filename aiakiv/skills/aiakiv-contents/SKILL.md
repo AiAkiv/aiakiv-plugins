@@ -19,9 +19,11 @@ description: >-
   in a response means; wants to set how a scene is told (its pace,
   interiority or what it withholds) or who the narrator is, or asks what a
   narration review such as a POV violation means; wants scenes like the one
-  being planned or written found in the creator's style memory (cases); says
-  "ak save" while connected to a Contents work; or is about to call
-  run_aiakiv_app_action with app="contents".
+  being planned or written found in the creator's style memory (cases);
+  wants the work process kept or read (which decisions were made and why,
+  what was tried and dropped), says "keep this as process" ("과정으로 남겨
+  줘"); says "ak save" while connected to a Contents work; or is about to
+  call run_aiakiv_app_action with app="contents".
 ---
 
 # AiAkiv Contents
@@ -84,7 +86,10 @@ Contents at all.
   whose name ends in `:canonical` (the work's own team, for example
   `contents:myproject:canonical`). A `binding` of `main`, or a project with
   any other name (another app's project, the user's own project, a style team
-  ending in `:technique`), is not the work team.
+  ending in `:technique`), is not the work team. A project ending in
+  `:process` is the memo team's process place (see "The process log"), not
+  the work team either: do not use the link tools there; read memos and
+  style with the app actions.
 - `get_work(doc_id=...)` reports `session_in_work: true`. The app decides
   this from the session itself, so it is the final word when the two
   disagree.
@@ -337,16 +342,49 @@ The `memory` topic of `describe` has the recipe ("사례 찾기", finding cases)
 - On a connection bound to the work team, the same `case_query` works as the
   `query` of `search_partner_memory` with `links.style.link_id`.
 
+## The process log
+
+Inside the memo team, a work can have a process project,
+`contents:<name>:process`. The connection folder the creator downloads from
+the "AI connection" screen is tied to it. It keeps the work process: which
+decisions were made and why, what was tried and dropped, where the direction
+changed. The creator chooses whether to keep each one.
+
+- Recognise it: `get_save_target` reports a `project` ending in `:process`,
+  or one equal to `process.project` at the top level of the `get_work`
+  response. There `session_in_work` is `false`, and that is normal; it is
+  `true` only on the work team itself. `get_work`'s `session_hint` says the
+  same.
+- At the start of a conversation on that connection, read the past process
+  once with `search_memory`. It returns memos and process entries together.
+- After a big decision or a change of direction, ask the creator once
+  whether to keep it as process. Do not ask every turn.
+- When the creator agrees, or says "ak save", call `save_memory` right away.
+  Follow the `aiakiv-save-and-recall` skill for the summary and entities.
+- `update_memory` is allowed there on your own process entries.
+- Do not put the work's content there. Scenes, settings and bodies go through
+  `add_node` and `update_node` as drafts, and the app publishes them when the
+  creator confirms.
+- Do not put memos there. Ideas still go to memos with `add_scratch`.
+- On Main or a `:canonical` connection, do not ask the creator to switch or
+  rebind the connection only to log process. If they ask how to keep
+  process, point to the connection folder on the "AI connection" screen.
+- When `get_work` has no `process` key, the work has no process place yet.
+  Opening the "AI connection" screen once creates it; tell the creator that
+  if they want one. Do not try to create it yourself.
+
 ## Common mistakes
 
 - **Everything the AI creates or edits is a draft.** The creator confirms it
   on the Contents screens, and the app publishes the confirmed version to
   memory at that moment. Do not tell the creator it is saved before then.
-- **Do not save the work's content with `save_memory`.** On a work team and
-  the memo team, `save_memory` and `hide_memory` are refused by default (while
-  the account permission `app-memory:write` is off, which only the user can
-  change). Do not use `update_memory` to edit memory the app published either:
-  the app's publish records and review marks would stop matching it.
+- **Do not save the work's content with `save_memory`.** On the work team
+  and the memo team's other projects, `save_memory` and `hide_memory` are
+  refused by default (while the account permission `app-memory:write` is
+  off, which only the user can change). The process project is the
+  exception, and only for the work process; see "The process log". Do not
+  use `update_memory` to edit memory the app published either: the app's
+  publish records and review marks would stop matching it.
 - **Facts and world lines are not in the Studio tree.** Do not send the
   creator to Studio to find or confirm one. The creator reads, edits, deletes
   and confirms facts on the fact list and fact view screens, which the
@@ -393,11 +431,16 @@ The `memory` topic of `describe` has the recipe ("사례 찾기", finding cases)
   a case.
 - **Ideas go to memos** with `add_scratch`. The creator sees them as memos
   ("메모" on the Korean screens), so use that word with the creator.
-- **Style notes are the one place for `save_memory`.** Building up style
-  descriptions on the style team is done with `save_memory`, from a folder
+- **`save_memory` has two places: style notes and the process log.** Build
+  up style descriptions on the style team with `save_memory`, from a folder
   connected to the style team, following the `aiakiv-save-and-recall` skill.
+  Keep the work process in the process project; see "The process log".
+  Nowhere else in a Contents work.
 - **"ak save" on a work connection.** If the user says "ak save" and this
-  connection follows a Contents work team, say that the save will be refused.
-  Then ask whether to leave it as a memo (`add_scratch`) or to save it through
-  another connection such as Main. Do not pick another destination on a guess.
+  connection's project ends in `:process`, save right away with
+  `save_memory`. If it ends in `:canonical`, or is the memo team's own
+  project, say that the save will be refused there. Then offer a memo
+  (`add_scratch`), or the connection folder from the "AI connection"
+  screen, which is tied to the process project. Do not pick another
+  destination on a guess.
 - **On an error**, read the `errors` topic of `describe` before trying again.
