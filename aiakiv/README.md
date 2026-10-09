@@ -9,13 +9,13 @@ onboarding, share cards, graph queries, and partner links.
 
 - **`AiAkiv` MCP server** (remote, hosted at `https://mcp.aiakiv.com/mcp`) —
   tools to save (`save_memory`), search (`search_memory`), explore the graph
-  (`find_related_memories`, `find_memory_connections`, `list_memory_timeline`), and confirm
+  (`find_memory_connections`, `list_memory_timeline`), and confirm
   where memory is going (`get_save_target`).
 - **`aiakiv-onboarding` skill** — walks you through connect → authenticate →
   pick project → save/recall.
 - **`aiakiv-cards` skill** — turns a memory topic into a public share card
-  (`card.aiakiv.com`): the create procedure, image-fit guidance, and the
-  publish/delete rules the AI must relay.
+  (`card.aiakiv.com`) with `create_aiakiv_card`: the create procedure,
+  image-fit guidance, and the publish/delete rules the AI must relay.
 - **`aiakiv-graph-query` skill** — how to write graph queries (Cypher subset)
   with `query_memory_graph`: the grammar, the relation vocabulary, ready-made
   recipes (shared-entity bridges, threads, "similar but structurally
