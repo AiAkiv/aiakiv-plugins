@@ -42,7 +42,14 @@ onboarding, share cards, graph queries, and partner links.
   `withhold`, the `narrator` on a form setting, the four narration reviews),
   and cases of similar scenes found with the query the app builds
   (`get_node.memory.case_query`), and the process log (the memo team's
-  `:process` project, where the work process is kept with `save_memory`).
+  `:process` project, where the work process is kept with `save_memory`),
+  and the game world (item, creature and faction settings, the place
+  relations `part_of`, `connects_to`, `located_in`, `member_of`, and
+  `export_work`, which reads the whole work so the AI can write a game
+  world file; engine numbers and the file stay with the game tool), and
+  video and images (a scene's shot list as a `shots` body, the form
+  setting's `visual_style`, assets with `canon_revision` and the staleness
+  signals `stale` and `depicted_changed`).
   The rules themselves stay in the app's `describe`.
 
 ## Install

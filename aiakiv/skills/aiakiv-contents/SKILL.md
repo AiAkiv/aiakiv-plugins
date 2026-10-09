@@ -22,8 +22,12 @@ description: >-
   being planned or written found in the creator's style memory (cases);
   wants the work process kept or read (which decisions were made and why,
   what was tried and dropped), says "keep this as process" ("과정으로 남겨
-  줘"); says "ak save" while connected to a Contents work; or is about to
-  call run_aiakiv_app_action with app="contents".
+  줘"); wants the whole work read at once to make material for another
+  medium (a game world file, a video script), or asks what an item,
+  creature or faction setting is for, or wants a scene's shot list written
+  or the work's visual style set; says "ak save" while connected to a
+  Contents work; or is about to call run_aiakiv_app_action with
+  app="contents".
 ---
 
 # AiAkiv Contents
@@ -42,12 +46,12 @@ never from memory.
 2. Read one more topic that fits the task, with the same call and another
    `topic` (writing a scene: `tree`; facts and world lines: `facts`; beats:
    `beats`; another language or style: `lang`; the narrator or how a scene
-   is told: `settings` and `slots`; cases of similar scenes: `memory`). The
-   topics today are
+   is told: `settings` and `slots`; cases of similar scenes: `memory`; the
+   whole work for a game or another medium: `export`). The topics today are
    `overview`, `tree`, `slots`, `settings`, `facts`, `time`, `links`,
-   `assets`, `lang`, `beats`, `memory`, `review`, `names`, `screens`,
-   `errors`. The list and what each topic says come from `describe`; if they
-   differ from this line, `describe` wins.
+   `assets`, `export`, `lang`, `beats`, `memory`, `review`, `names`,
+   `screens`, `errors`. The list and what each topic says come from
+   `describe`; if they differ from this line, `describe` wins.
 3. Pick the work with `get_work`. Called without `doc_id` it lists the user's
    works with `recent_work_id`. If the user named a work by its title and you
    do not know its `doc_id`, find it in that list, then call `get_work` with
@@ -373,6 +377,78 @@ changed. The creator chooses whether to keep each one.
   Opening the "AI connection" screen once creates it; tell the creator that
   if they want one. Do not try to create it yourself.
 
+## The game world: places, creatures, items and the whole work
+
+Contents keeps the facts of the world and the creator's intent, whatever
+medium the work becomes. It does not keep engine numbers and does not write
+engine files. The AI reads the whole work and writes the engine file from
+it, the way it writes prose from a scene plan. The response shape and the
+recipe are in the `export` topic of `describe`.
+
+- Three setting facets sit beside `character` and `world`: `item` (an
+  object), `creature` and `faction`. They have no slots; the description
+  says what the thing looks like and what it is in the story, never its
+  numbers. Rooms and regions are places (`facet: "world"`), and a place
+  inside a place is a `part_of` link, not a child in the tree.
+- Four directed link relations, free text in `note`: `part_of` (place in
+  place), `connects_to` (place to place, one way: a two-way passage is two
+  links), `located_in` (a character's usual place; a scene's own place is
+  its `place_node_id` slot) and `member_of` (character to faction). No
+  compass direction is stored; "the north gate" in `note` is only text.
+  `add_link` refuses other pairings; see the `links` topic.
+- Order of work for a game:
+  1. Read the `export` topic, then the game tool's file format in its own
+     repository.
+  2. `export_work` with `confirmed_only: true`; add `include_bodies: true`
+     only when the prose itself is needed, since a big work is large.
+  3. Map. A place becomes a room (title to shown name, description to
+     description, you choose the key). A `connects_to` link becomes one
+     exit on its `from` room; the direction comes from `note` or the game
+     worker, and a way back exists only if the reverse link does. A
+     creature becomes a monster; its usual place is in its description or
+     a fact, since `located_in` takes characters only. An item becomes an
+     entry in the game's own item list. `part_of`, factions, characters,
+     scenes, facts and world lines feed descriptions, quests and dialogue,
+     not file entries.
+  4. Settle every number (hit points, attack, drops, caps, levels) with the
+     game worker, and write the file into the engine repository.
+- Register the written file as an asset setting: `facet: "asset"`, the five
+  slots `asset_type`, `asset_state`, `file_url`, `spec`, `canon_revision`
+  (the `export_work` response's `doc.revision`), and `depicts` links to what
+  it shows (none for a file of the whole work). Ask the creator to confirm
+  the entry: `list_assets` signals (`stale`, `review_open` with
+  `depicted_changed`) start only after that first confirmation.
+- When the game needs a place or creature the story lacks, tell the
+  creator, who adds it on the Contents screens or asks you to add a draft;
+  only then does it enter the file. Nothing flows back from the file.
+- The creator gets the same JSON as a file from "Export" in the top menu.
+
+## Video and images: shot lists and the visual style
+
+The canon for video and images is a scene's shot description, the looks in
+the setting descriptions and the work's visual style. Prompts, seeds,
+numbers, takes and the tool's file format are not canon.
+
+- A shot list is a body: `add_node` with `kind: "body"` and
+  `medium: "shots"` (`prose` is the default). A scene holds a `prose` and a
+  `shots` body per language side by side. `medium` cannot change after
+  creation, and a `source` must have the same medium.
+- Read it with `get_node` on the scene and `data.medium: "shots"`: `body` is
+  that medium's body, and `bodies` lists all with `lang` and `medium`.
+- Write plain text, a numbered list, one shot per paragraph: what is seen,
+  who, where, the action, the line spoken, the sound. Shot size and angle in
+  words are fine. The shape is advised, not checked.
+- Style checks, anchors, beats and cases are for prose: `marks` stays empty
+  and `beats` on a shot list is refused. That is intended.
+- The look to keep across video and images is `visual_style` on a form
+  setting (pack `visual`): mood, colour, light, what to avoid. A nearer form
+  setting replaces it whole; read it in `get_node`'s `form`. The looks of
+  characters and places stay in their setting descriptions.
+- Register only the adopted file, as an asset with `depicts` to the scene,
+  the shot number in `spec` and `canon_revision`, as above.
+- The creator writes and confirms shot lists on the same Studio screens as
+  prose.
+
 ## Common mistakes
 
 - **Everything the AI creates or edits is a draft.** The creator confirms it
@@ -429,6 +505,19 @@ changed. The creator chooses whether to keep each one.
   `memory_unavailable` or zero hits all mean "write without cases". Do not
   stop, do not ask the creator to bind or switch anything, and do not invent
   a case.
+- **Engine numbers are not canon.** Hit points, attack, drop weights, mint
+  caps, compass directions and the file format belong to the game tool and
+  its repository. Do not write them into a setting's description or slots,
+  and do not ask the creator to decide them in Contents.
+- **The app does not write the world file.** `export_work` gives the whole
+  work as one neutral JSON; the AI assembles the engine file from it and
+  registers the file as an asset. Do not look for an export action that
+  returns `world.toml`, and do not send the JSON to the creator as if it
+  were the game file.
+- **Prompts, seeds and takes are not canon.** The shot list and the visual
+  style are canon; the prompt text, seed, duration, aspect ratio, tool ids
+  and the tries belong to the tool. Register only the adopted file as an
+  asset.
 - **Ideas go to memos** with `add_scratch`. The creator sees them as memos
   ("메모" on the Korean screens), so use that word with the creator.
 - **`save_memory` has two places: style notes and the process log.** Build
