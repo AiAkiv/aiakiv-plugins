@@ -81,8 +81,10 @@ sign up and approve — the AiAkiv memory tools (`save_memory`, `search_memory`,
 Outside Claude Code, AiAkiv is a remote MCP server at `https://mcp.aiakiv.com/mcp`.
 It is published in the official MCP Registry as **`com.aiakiv/memory`**, so a client
 that can search the registry will find it by name (`aiakiv`) or keyword (`memory`)
-and register the endpoint for you — no URL to paste. Either way you still approve the
-sign-in once. See [docs/connect.md](docs/connect.md) for per-client steps.
+and register the endpoint for you — no URL to paste. To add it by hand as a custom
+connector, paste `https://mcp.aiakiv.com/mcp?apps=all`: the same endpoint with the app
+features turned on. Either way you still approve the sign-in once. See
+[docs/connect.md](docs/connect.md) for per-client steps.
 
 > **ChatGPT is the exception.** It cannot search the registry or write an MCP config,
 > and it does not complete the OAuth sign-in — it asks for a bearer token instead. In
@@ -128,4 +130,5 @@ through the MCP endpoint (`https://mcp.aiakiv.com/mcp`) is operated by
 ## Links
 
 - Website: <https://aiakiv.com>
-- MCP endpoint: `https://mcp.aiakiv.com/mcp`
+- MCP endpoint: `https://mcp.aiakiv.com/mcp` (to add it by hand, paste
+  `https://mcp.aiakiv.com/mcp?apps=all`)

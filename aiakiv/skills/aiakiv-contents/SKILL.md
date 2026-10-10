@@ -47,7 +47,7 @@ the first call, `describe` included.
 
 - **The tool is in your tool list.** Go on to "Start here". When this
   conversation has two AiAkiv connections, call it on the connection that
-  has it, usually the folder connection.
+  has it; if both have it, on the one bound to a folder or to an API key.
 - **It is not in your tool list, or a call came back with "This tool is not
   available on this connection."** Nothing happened. Do not call it again.
   Tell the creator that this connection does not support app features, that
@@ -57,8 +57,10 @@ the first call, `describe` included.
   from the "AI connection" screen, any other folder connection, an API key
   connection, or the AiAkiv plugin for Claude Code or Cursor. If the creator
   only uses the account connector in Claude on the web or in the mobile
-  apps, say that asking the AI needs a new connection such as a folder
-  connection in Claude Code or Claude Desktop. The steps are at
+  apps, say that asking the AI needs that connector's address changed to
+  `https://mcp.aiakiv.com/mcp?apps=all` (edit it, or remove it and add it
+  again), or a new connection such as a folder connection in Claude Code or
+  Claude Desktop. The steps are at
   https://www.aiakiv.com/docs/app-actions. For ChatGPT, see
   https://www.aiakiv.com/docs/chatgpt.
 

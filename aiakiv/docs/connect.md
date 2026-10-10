@@ -7,20 +7,30 @@ two client kinds, the order to do things in, and the per-client steps.
 
 **Endpoint (Streamable HTTP):** `https://mcp.aiakiv.com/mcp`
 
-- The URL **MUST end with `/mcp`**. Without it the connection may succeed but **zero
-  tools** appear. Never register the bare host, and never guess a brand-domain URL
-  like `aiakiv.com/mcp`.
+**Address to paste when you add AiAkiv by hand:** `https://mcp.aiakiv.com/mcp?apps=all`
+(a custom connector in Claude on the web, desktop, or mobile, in Grok, or in any other
+client that takes an address and a sign-in). It is the same endpoint; `?apps=all` turns
+on the app features as well (see the last two items below).
+
+- The path **MUST end with `/mcp`** (the part before any `?`). Without it the
+  connection may succeed but **zero tools** appear. Never register the bare host, and
+  never guess a brand-domain URL like `aiakiv.com/mcp`.
 - AiAkiv is a **hosted** service — connecting requires signing in (**OAuth**) or a
   project-bound **API key** (Gemini CLI). There is no anonymous/keyless mode.
 - AiAkiv **is** in the official MCP Registry as `com.aiakiv/memory` (see below). In
   ChatGPT it is listed in the plugin directory as **AiAkiv Memory**: install it from
   there. It is **not** in the in-app connector directories of Claude Web / Grok. In
-  those apps, add it **manually** as a custom connector with the URL above.
-- A connection made with the address alone (pasted into a web app, or installed from
-  an app directory) can save, search, and make cards. It does not have the app action
-  tool (`run_aiakiv_app_action`), so teams, invitations, projects, and card management
-  are done in the web console. Folder connections, API-key connections, and the AiAkiv
-  plugin for Claude Code and Cursor have that tool.
+  those apps, add it **manually** as a custom connector with the address to paste above.
+- Every connection can save, search, and make cards. The app action tool
+  (`run_aiakiv_app_action`: teams, invitations, projects, and card management from the
+  conversation) is there when a sign-in connection's address carries `?apps=all` or
+  names a project (`?project=`). API-key connections and the AiAkiv plugin for Claude
+  Code and Cursor have it too. A sign-in connection added with the plain address (no
+  `?apps=all`, no project) and the ChatGPT plugin-directory install do not have it:
+  there that work is done in the web console.
+- A connector you already added with the plain address does not change by itself. To
+  get the app features, change its address to the `?apps=all` one, or remove it and add
+  it again.
 
 ## Finding it in the official MCP Registry
 
@@ -29,7 +39,7 @@ A client that can search the registry finds it by name (`aiakiv`) or by keyword
 (`memory`) and registers the endpoint itself — so you can just ask your agent to
 "find aiakiv in the MCP registry and install it" instead of pasting the URL.
 
-- The listing points at the same address as above, so the outcome is identical. The
+- The listing points at the `?apps=all` address above, so the outcome is identical. The
   registry only saves you the typing — **it does not skip the sign-in step**.
 - Registry search matches the **name**, not the description.
 
@@ -142,15 +152,19 @@ it to another project, swap in that project's key.
 
 ## Global web clients — where to register
 
-- **Claude Web:** Settings → Connectors → + → Add custom connector → paste the URL.
+- **Claude Web:** Settings → Connectors → + → Add custom connector → paste
+  `https://mcp.aiakiv.com/mcp?apps=all`.
   (Pro/Max; on team/enterprise, owner only via Org settings → Connectors.)
 - **ChatGPT:** Settings → Plugins → Browse directory → search **AiAkiv Memory** →
   Install plugin, then sign in with your AiAkiv account. The plugin is turned on per
   conversation (Plugins, under the message box).
-- **xAI/Grok:** grok.com/connectors → New Connector → Custom → paste the URL.
+- **xAI/Grok:** grok.com/connectors → New Connector → Custom → paste
+  `https://mcp.aiakiv.com/mcp?apps=all`.
 
-A connection registered this way can save, search, and make cards, but it has no app
-action tool (`run_aiakiv_app_action`): manage teams, invitations, projects, and cards in
+All three can save, search, and make cards. A connector added with the `?apps=all`
+address also gets the app action tool (`run_aiakiv_app_action`). The ChatGPT plugin
+does not have it, and neither does a connector added earlier with the plain address
+until its address is changed: there, manage teams, invitations, projects, and cards in
 the web console.
 
 **Persona pairing (ChatGPT / Claude Web).** A persona returned inside a tool result
@@ -165,7 +179,7 @@ Personalization → Custom Instructions; Claude Web: the Project's custom instru
 
 ## Cautions
 
-1. The `/mcp` suffix is mandatory (or zero tools appear).
+1. The path must end with `/mcp`, before any `?` (or zero tools appear).
 2. **ChatGPT + Codex together:** do NOT connect AiAkiv on the ChatGPT side — the
    ChatGPT connection wins and Codex's per-folder config is ignored.
 3. **OAuth clients (Claude Code, Cursor):** changing the project (the `project` in the
@@ -182,7 +196,7 @@ Personalization → Custom Instructions; Claude Web: the Project's custom instru
 
 Once connected, the memory tools appear (`save_memory`, `search_memory`,
 `get_save_target`). Call `get_save_target` to confirm which
-team / project / domain your saves go to. No tools showing? The URL is almost
-certainly missing the `/mcp` suffix.
+team / project / domain your saves go to. No tools showing? The address is almost
+certainly missing `/mcp` before the `?`.
 
 See [concepts.md](./concepts.md) for the Team → Project → Domain → persona model.

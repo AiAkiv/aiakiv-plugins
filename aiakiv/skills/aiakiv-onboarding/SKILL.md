@@ -19,15 +19,19 @@ The plugin registers one remote MCP server, `AiAkiv`. On first use Claude Code
 opens an **OAuth** login in the browser: sign in or sign up, approve, and the
 AiAkiv memory tools become available.
 
-The service address is `https://mcp.aiakiv.com/mcp`, and it must end with `/mcp`.
-If a connection the user set up by hand shows no tools, check that its URL ends
-with `/mcp` (the bare domain returns zero tools).
+The service address is `https://mcp.aiakiv.com/mcp`, and its path must end with
+`/mcp`. To add AiAkiv by hand in a client that takes an address and a sign-in (a
+custom connector in Claude on the web, desktop or mobile, Grok and the like), the
+address is `https://mcp.aiakiv.com/mcp?apps=all`: the same endpoint with app
+features turned on (§7). If a connection the user set up by hand shows no tools,
+check that the part of its URL before any `?` ends with `/mcp` (the bare domain
+returns zero tools).
 
 If the user asks how to add AiAkiv to a **different** client, it is also published
 in the official MCP Registry as `com.aiakiv/memory` — a client that can search the
 registry finds it by name (`aiakiv`) or keyword (`memory`) and registers the
 endpoint itself. Same address, same one-time sign-in; the registry only removes the
-typing. Tell them the endpoint above either way.
+typing. Tell them the `?apps=all` address above either way.
 
 **Do not send a ChatGPT user down that path.** ChatGPT cannot search the registry or
 write an MCP config. In ChatGPT, AiAkiv is installed from the plugin directory inside
@@ -145,13 +149,18 @@ projects, Main, cards) or working in Contents.
   and creating cards work on every AiAkiv connection.
 - A connection installed with the AiAkiv plugin for Claude Code or Cursor,
   like the one this plugin registers, has app features. So do folder
-  connections (a `project` in the URL, §4) and API key connections.
-- A connection made in another app with the address alone and a sign-in,
-  such as the account connector in Claude on the web or in the mobile apps,
-  does not. There the tool is missing from the tool list, and a call by name
-  is refused with "This tool is not available on this connection." When a
-  conversation has both kinds, call the tool on the connection that has it.
+  connections (a `project` in the URL, §4), API key connections, and a
+  connection added by hand with the `?apps=all` address (§1).
+- A connection made in another app with the plain address (no `?apps=all`,
+  no `project`) and a sign-in, such as an account connector added that way
+  to Claude on the web or in the mobile apps, does not. There the tool is
+  missing from the tool list, and a call by name is refused with "This tool
+  is not available on this connection." Such a connector does not change by
+  itself: it gets app features once its address is changed to the
+  `?apps=all` one, or it is removed and added again. When a conversation
+  has both kinds, call the tool on the connection that has it; when two
+  connections have it, use the one bound to a folder or to an API key.
 - Everything the console app does, the user can also do by hand in the web
   console (the dashboard), https://app.aiakiv.com. Having the AI do it from
-  a connection without app features takes a new MCP connection; the
-  `aiakiv-console` skill says what to tell the user.
+  a connection without app features takes that address change or a new MCP
+  connection; the `aiakiv-console` skill says what to tell the user.

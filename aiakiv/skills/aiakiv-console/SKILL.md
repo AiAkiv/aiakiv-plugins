@@ -35,8 +35,9 @@ them. Check before the first call, `describe` included.
 
 1. **`run_aiakiv_app_action` is in your tool list.** Go on. When this
    conversation has two AiAkiv connections, call the tool on the connection
-   that has it. That is usually the folder connection; an account connector
-   attached next to it does not have the tool.
+   that has it. If both have it (an account connector added with the
+   `?apps=all` address has it too), use the one bound to a folder or to an
+   API key, the same choice as for saving.
 2. **It is not in your tool list, or a call came back with "This tool is not
    available on this connection."** Nothing happened and nothing changed. Do
    not call it again. Tell the user:
@@ -52,8 +53,10 @@ them. Check before the first call, `describe` included.
      connection, or the AiAkiv plugin for Claude Code or Cursor. If the user
      only uses the account connector in Claude on the web or in the mobile
      apps, say that on this connection the work is done in the dashboard, and
-     that asking the AI needs a new connection such as a folder connection in
-     Claude Code or Claude Desktop. The steps are at
+     that asking the AI needs that connector's address changed to
+     `https://mcp.aiakiv.com/mcp?apps=all` (edit it, or remove it and add it
+     again), or a new connection such as a folder connection in Claude Code
+     or Claude Desktop. The steps are at
      https://www.aiakiv.com/docs/app-actions. For ChatGPT, see
      https://www.aiakiv.com/docs/chatgpt.
 3. The console app covers teams and invitations, links, audit logs, projects,
