@@ -12,9 +12,15 @@ two client kinds, the order to do things in, and the per-client steps.
   like `aiakiv.com/mcp`.
 - AiAkiv is a **hosted** service — connecting requires signing in (**OAuth**) or a
   project-bound **API key** (Gemini CLI). There is no anonymous/keyless mode.
-- AiAkiv **is** in the official MCP Registry as `com.aiakiv/memory` (see below), but
-  it is **not** in the in-app connector directories of ChatGPT / Claude Web / Grok.
-  In those apps, add it **manually** as a custom connector with the URL above.
+- AiAkiv **is** in the official MCP Registry as `com.aiakiv/memory` (see below). In
+  ChatGPT it is listed in the plugin directory as **AiAkiv Memory**: install it from
+  there. It is **not** in the in-app connector directories of Claude Web / Grok. In
+  those apps, add it **manually** as a custom connector with the URL above.
+- A connection made with the address alone (pasted into a web app, or installed from
+  an app directory) can save, search, and make cards. It does not have the app action
+  tool (`run_aiakiv_app_action`), so teams, invitations, projects, and card management
+  are done in the web console. Folder connections, API-key connections, and the AiAkiv
+  plugin for Claude Code and Cursor have that tool.
 
 ## Finding it in the official MCP Registry
 
@@ -31,8 +37,8 @@ A client that can search the registry finds it by name (`aiakiv`) or by keyword
 > write an MCP config itself, and — the part that actually blocks it — does not
 > complete our OAuth sign-in: it receives the `401` with `WWW-Authenticate` and asks
 > you for a bearer token in an environment variable instead of opening the sign-in
-> window. For ChatGPT use the connector UI (see *Global web clients* below), and if
-> your build offers no sign-in there, paste a project-bound API key from the console.
+> window. For ChatGPT, install **AiAkiv Memory** from the plugin directory (see *Global
+> web clients* below); to pin a folder, use a project-bound API key from the console.
 > Clients that follow the `401` header (Claude Code, for example) open the sign-in
 > window normally.
 
@@ -41,14 +47,15 @@ Console (create projects/teams/keys, switch Main, set personas): <https://aiakiv
 ## Two client kinds
 
 **Folder clients** — Claude Code, Codex, Cursor, Gemini CLI. Bind each working folder
-to a project explicitly with the `X-K2G-Project` header (value = project name). The
-header names the project directly, so these do **not** depend on Main.
+to a project explicitly: put the project in the connection address
+(`?project=<project-name>`), or use a project-bound API key (Gemini CLI and Codex).
+Either one names the project directly, so these do **not** depend on Main.
 
 > Order: **create the project → connect** (its name goes into the config file). No
 > Main step.
 
 **Global web clients** — Claude Web, ChatGPT, xAI/Grok. They cannot split by folder;
-they send no header and follow whatever project is **Main**.
+their address names no project, so they follow whatever project is **Main**.
 
 > Order: **create the project → set it as Main → connect** (an app-wide connection
 > follows Main, so once you connect it already points at the right project).
@@ -66,19 +73,28 @@ JSON — `.mcp.json` (Claude Code / Claude Desktop) or `.cursor/mcp.json` (Curso
   "mcpServers": {
     "AiAkiv": {
       "type": "http",
-      "url": "https://mcp.aiakiv.com/mcp",
-      "headers": { "X-K2G-Project": "<project-name>" }
+      "url": "https://mcp.aiakiv.com/mcp?project=<project-name>"
     }
   }
 }
 ```
 
-TOML — `.codex/config.toml` (Codex / Codex CLI):
+URL-encode the name if it has spaces or non-ASCII characters (`My Project` becomes
+`My%20Project`). The console's project tab gives a ready-to-copy version of this config
+with the name already filled in and encoded.
+
+Name the project in the address, not only in an `X-K2G-Project` header. Some clients do
+not send a custom header on every request, so a folder that relies on the header alone
+can end up following Main.
+
+TOML — `.codex/config.toml` (Codex / Codex CLI). The sign-in folder binding above does
+not work in this client, so pin the folder with a project-bound API key (issue it per
+project in the console, shown once):
 
 ```toml
 [mcp_servers.AiAkiv]
 url = "https://mcp.aiakiv.com/mcp"
-http_headers = { "X-K2G-Project" = "<project-name>" }
+http_headers = { "Authorization" = "Bearer <API-KEY>" }
 ```
 
 API key — `.gemini/settings.json` (Gemini CLI only; issue the key per project in the
@@ -128,9 +144,14 @@ it to another project, swap in that project's key.
 
 - **Claude Web:** Settings → Connectors → + → Add custom connector → paste the URL.
   (Pro/Max; on team/enterprise, owner only via Org settings → Connectors.)
-- **ChatGPT Web/App:** Settings → Apps → Advanced → enable Developer mode → create an
-  app (connector) → paste the URL. (Web, Plus and up.)
+- **ChatGPT:** Settings → Plugins → Browse directory → search **AiAkiv Memory** →
+  Install plugin, then sign in with your AiAkiv account. The plugin is turned on per
+  conversation (Plugins, under the message box).
 - **xAI/Grok:** grok.com/connectors → New Connector → Custom → paste the URL.
+
+A connection registered this way can save, search, and make cards, but it has no app
+action tool (`run_aiakiv_app_action`): manage teams, invitations, projects, and cards in
+the web console.
 
 **Persona pairing (ChatGPT / Claude Web).** A persona returned inside a tool result
 usually does NOT change a web client's behavior on its own. To make it stick, paste
@@ -147,13 +168,15 @@ Personalization → Custom Instructions; Claude Web: the Project's custom instru
 1. The `/mcp` suffix is mandatory (or zero tools appear).
 2. **ChatGPT + Codex together:** do NOT connect AiAkiv on the ChatGPT side — the
    ChatGPT connection wins and Codex's per-folder config is ignored.
-3. **OAuth clients (Claude Code, Cursor):** changing the project (the header) requires
-   re-authenticating. Keep a separate config per folder to avoid repeated logins.
+3. **OAuth clients (Claude Code, Cursor):** changing the project (the `project` in the
+   address) may require signing in again. Keep a separate config per folder to avoid
+   repeated logins.
 4. **Gemini CLI:** its OAuth session does not persist — you must use the API-key
    method.
-5. **ChatGPT app:** it does not complete OAuth. Given a `401`, it asks for a bearer
-   token instead of signing in, so registry/URL registration stops there. Use a
-   project-bound API key from the console for that client.
+5. **ChatGPT app:** a connection added by URL or config file does not complete the
+   sign-in. Given a `401`, it asks for a bearer token instead of signing in, so
+   registry/URL registration stops there. Install **AiAkiv Memory** from the plugin
+   directory, or for a pinned folder use a project-bound API key from the console.
 
 ## Verify
 

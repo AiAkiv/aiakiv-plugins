@@ -73,7 +73,8 @@ so the install command is identical to the production one above — only the
 `marketplace add` source differs (`./packaging/plugins` vs `aiakiv/aiakiv-plugins`).
 
 On first use, Claude Code opens an **OAuth** login in your browser. Sign in /
-sign up and approve — the `mweft_*` tools then appear.
+sign up and approve — the AiAkiv memory tools (`save_memory`, `search_memory`,
+`get_save_target`, and the rest) then appear.
 
 ### Other clients — ask your agent to install it
 

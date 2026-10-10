@@ -2,7 +2,7 @@
   "mcpServers": {
     "AiAkiv": {
       "type": "http",
-      "url": "https://mcp.aiakiv.com/mcp"
+      "url": "https://mcp.aiakiv.com/mcp?apps=all"
     }
   }
 }

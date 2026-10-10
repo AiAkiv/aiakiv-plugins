@@ -15,11 +15,13 @@ gets a new user connected and productive.
 
 ## 1. Connect & authenticate
 
-The plugin registers one remote MCP server, `AiAkiv`, at
-`https://mcp.aiakiv.com/mcp`. On first use Claude Code opens an **OAuth** login
-in the browser — sign in / sign up, approve, and the AiAkiv memory tools become
-available. If no tools appear, the URL must be the canonical `/mcp` (the bare
-domain returns zero tools).
+The plugin registers one remote MCP server, `AiAkiv`. On first use Claude Code
+opens an **OAuth** login in the browser: sign in or sign up, approve, and the
+AiAkiv memory tools become available.
+
+The service address is `https://mcp.aiakiv.com/mcp`, and it must end with `/mcp`.
+If a connection the user set up by hand shows no tools, check that its URL ends
+with `/mcp` (the bare domain returns zero tools).
 
 If the user asks how to add AiAkiv to a **different** client, it is also published
 in the official MCP Registry as `com.aiakiv/memory` — a client that can search the
@@ -40,8 +42,8 @@ confirm it:
 
 - Call `get_save_target` → it reports `save_domain` / `save_group`.
 - If it points at the wrong project, the user's account default is their **Main**
-  project. To bind a specific folder to a specific project, add a project header
-  to that folder's `.mcp.json` (see §4) — do **not** guess a project name.
+  project. To bind a specific folder to a specific project, put the project name
+  in the URL of that folder's `.mcp.json` (see §4) — do **not** guess a project name.
 
 ## 3. Save and recall
 
@@ -56,24 +58,33 @@ confirm it:
 
 ## 4. Bind a folder to a specific project (optional)
 
-Default (no header) → memory goes to the account's Main project. To pin a folder
-to another project, give that folder its own `.mcp.json` with a project header:
+Default (no `project` in the URL) → memory goes to the account's Main project. To
+pin a folder to another project, give that folder its own `.mcp.json` whose URL
+names the project:
 
 ```json
 { "mcpServers": { "AiAkiv": {
   "type": "http",
-  "url": "https://mcp.aiakiv.com/mcp",
-  "headers": { "X-K2G-Project": "<project-name>" }
+  "url": "https://mcp.aiakiv.com/mcp?project=<project-name>"
 } } }
 ```
 
-Changing the header value re-triggers OAuth (a login prompt, not a failure). For
-friction-free per-folder switching, the console can issue a static project-bound
-key instead — see the AiAkiv console → project tab.
+URL-encode the name if it has spaces or non-ASCII characters (`My Project` becomes
+`My%20Project`). The console's project tab gives a ready-to-copy version of this
+config with the name already filled in and encoded.
+
+Name the project in the URL, not only in an `X-K2G-Project` header. Some clients
+do not send a custom header on every request, so a folder that relies on the
+header alone can end up following Main. If the user has an older header-only
+config, move the project name into the URL.
+
+Changing the project in the URL may bring up the OAuth login again (a login
+prompt, not a failure). For friction-free per-folder switching, the console can
+issue a static project-bound key instead — see the AiAkiv console → project tab.
 
 If the user turns Main off in the console, every connection that follows Main (no
-project header and no project-bound key) refuses all tools until Main is turned
-back on; folders pinned with the header keep working.
+`project` in the URL and no project-bound key) refuses all tools until Main is
+turned back on; folders pinned to a project keep working.
 
 ## 5. Trust & privacy
 
