@@ -39,6 +39,35 @@ only says where to start and which mistakes to avoid. Whenever this file and
 `describe` disagree, follow `describe`. Take action arguments from `describe`,
 never from memory.
 
+## Does this connection have app features? Check first
+
+The AI works in Contents only on a connection that has **app features**,
+that is, one where `run_aiakiv_app_action` is in the tool list. Check before
+the first call, `describe` included.
+
+- **The tool is in your tool list.** Go on to "Start here". When this
+  conversation has two AiAkiv connections, call it on the connection that
+  has it, usually the folder connection.
+- **It is not in your tool list, or a call came back with "This tool is not
+  available on this connection."** Nothing happened. Do not call it again.
+  Tell the creator that this connection does not support app features, that
+  they can write, edit and confirm the work by hand on the Contents
+  screens, and that having the AI do what they asked for (name it) takes
+  **a new MCP connection** that has app features: the connection folder
+  from the "AI connection" screen, any other folder connection, an API key
+  connection, or the AiAkiv plugin for Claude Code or Cursor. If the creator
+  only uses the account connector in Claude on the web or in the mobile
+  apps, say that asking the AI needs a new connection such as a folder
+  connection in Claude Code or Claude Desktop. The steps are at
+  https://www.aiakiv.com/docs/app-actions. For ChatGPT, see
+  https://www.aiakiv.com/docs/chatgpt.
+
+This is a different check from "Is this connection the work team?" below.
+That one asks which project the connection follows and only decides whether
+the link tools can be used. This one asks whether the app action tool is
+there at all. Without it the creator still works on the Contents screens by
+hand; a missing tool never blocks the work itself.
+
 ## Start here
 
 1. Read the overview:
@@ -61,10 +90,11 @@ never from memory.
 
 There are two ways to read the memo team and the style team.
 
-1. **App actions**, from any connection: `search_scratch` and `get_scratch`
-   for memos, `search_work_memory` and `get_work_memory` for confirmed content
-   (`team` `work`) and the creator's style (`team` `technique`). They search
-   and read the full text.
+1. **App actions**, from any connection that has app features, whichever
+   project it follows: `search_scratch` and `get_scratch` for memos,
+   `search_work_memory` and `get_work_memory` for confirmed content (`team`
+   `work`) and the creator's style (`team` `technique`). They search and
+   read the full text.
 2. **Links**, only when this connection is bound to the work team (see
    "Is this connection the work team?" below). The work team reads the memo
    team and the style team through links. Pass the `link_id` to

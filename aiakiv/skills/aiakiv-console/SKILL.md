@@ -27,6 +27,41 @@ need the link feature enabled, plus the permission catalog and `settings_url`.
 Do not guess parameter names from this file if `describe` disagrees;
 `describe` is the live contract.
 
+## Does this connection have app features? Check first
+
+**App features** means asking the AI to do app work, such as console
+management, through `run_aiakiv_app_action`. Not every AiAkiv connection has
+them. Check before the first call, `describe` included.
+
+1. **`run_aiakiv_app_action` is in your tool list.** Go on. When this
+   conversation has two AiAkiv connections, call the tool on the connection
+   that has it. That is usually the folder connection; an account connector
+   attached next to it does not have the tool.
+2. **It is not in your tool list, or a call came back with "This tool is not
+   available on this connection."** Nothing happened and nothing changed. Do
+   not call it again. Tell the user:
+   - This connection does not support app features.
+   - What they just asked for (name it, for example "inviting a member" or
+     "switching Main") can be done by hand in the web console (the
+     dashboard), https://app.aiakiv.com. Name the menu when you know it, and
+     use only menu names that appear in this skill or in
+     https://www.aiakiv.com/docs/console-actions.
+   - Having the AI do it takes **a new MCP connection**, one that has app
+     features: a folder connection (a working folder attached with a project
+     chosen; the console's project tab writes the config for it), an API key
+     connection, or the AiAkiv plugin for Claude Code or Cursor. If the user
+     only uses the account connector in Claude on the web or in the mobile
+     apps, say that on this connection the work is done in the dashboard, and
+     that asking the AI needs a new connection such as a folder connection in
+     Claude Code or Claude Desktop. The steps are at
+     https://www.aiakiv.com/docs/app-actions. For ChatGPT, see
+     https://www.aiakiv.com/docs/chatgpt.
+3. The console app covers teams and invitations, links, audit logs, projects,
+   the save target (Main) and the user's cards; the table below has the
+   actions. **Everything the console app does, the user can also do by hand
+   in the dashboard.** Asking the AI is a convenience, so say that plainly
+   whenever the AI path is not open.
+
 ## Three layers — all must pass
 
 1. **Credential scope.** Reads need read scope. Writes need the `manage` scope.

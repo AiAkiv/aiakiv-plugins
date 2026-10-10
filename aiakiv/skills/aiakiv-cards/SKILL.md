@@ -123,6 +123,16 @@ matching console AI permission the user turned on; see the aiakiv-console
 skill. The user can do the same things by hand in the AiAkiv web console
 (app.aiakiv.com, Data, Cards).
 
+Creating a card works on every AiAkiv connection. Managing cards through the
+AI is an app feature, and not every connection has app features. If
+`run_aiakiv_app_action` is not in your tool list, or a call comes back with
+"This tool is not available on this connection.", do not call it again. Tell
+the user that this connection does not support app features, that all of
+this can be done by hand in the web console (the dashboard) under Data,
+Cards, and that having the AI do it takes a new MCP connection that has app
+features (a folder connection, an API key connection, or the AiAkiv plugin
+for Claude Code or Cursor). The aiakiv-console skill has the full wording.
+
 - Claim you deleted a card or changed its search visibility only when the
   console call actually returned `ok: true`. A `delete_card` error means the
   card is still public.

@@ -30,10 +30,9 @@ endpoint itself. Same address, same one-time sign-in; the registry only removes 
 typing. Tell them the endpoint above either way.
 
 **Do not send a ChatGPT user down that path.** ChatGPT cannot search the registry or
-write an MCP config, and it does not complete our OAuth sign-in — it reads the `401`
-and asks for a bearer token in an environment variable. For ChatGPT: add the URL in
-the connector UI, and if no sign-in appears, have them issue a project-bound API key
-in the console and paste that.
+write an MCP config. In ChatGPT, AiAkiv is installed from the plugin directory inside
+the app: search for AiAkiv Memory, install it and sign in. The steps are at
+https://www.aiakiv.com/docs/chatgpt.
 
 ## 2. Confirm where memory is going (the "active target")
 
@@ -135,3 +134,24 @@ Two related refusals are not transport problems and are not fixed by
   focused summary. A summary that wants to be long usually means the event
   covers too much, and squeezing it blurs several topics into one vector that
   then matches no specific query.
+
+## 7. Which connection has app features
+
+**App features** means asking the AI to do app work through
+`run_aiakiv_app_action`, such as console management (teams, invitations,
+projects, Main, cards) or working in Contents.
+
+- Saving, searching, reading full text, reading linked teams, graph queries
+  and creating cards work on every AiAkiv connection.
+- A connection installed with the AiAkiv plugin for Claude Code or Cursor,
+  like the one this plugin registers, has app features. So do folder
+  connections (a `project` in the URL, §4) and API key connections.
+- A connection made in another app with the address alone and a sign-in,
+  such as the account connector in Claude on the web or in the mobile apps,
+  does not. There the tool is missing from the tool list, and a call by name
+  is refused with "This tool is not available on this connection." When a
+  conversation has both kinds, call the tool on the connection that has it.
+- Everything the console app does, the user can also do by hand in the web
+  console (the dashboard), https://app.aiakiv.com. Having the AI do it from
+  a connection without app features takes a new MCP connection; the
+  `aiakiv-console` skill says what to tell the user.
