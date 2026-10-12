@@ -3,11 +3,11 @@ name: aiakiv-graph-query
 description: >-
   Write graph queries (Cypher subset) against AiAkiv/MWeft memory with
   query_memory_graph (and query_partner_memory_graph across a link). Use when the
-  user asks with the request phrase "ak graph" / "ak 그래프", or otherwise
-  explicitly asks for a graph query over how memories are connected — shared
-  entities, bridges, threads, multi-hop paths, co-occurrence. Lower priority: a
-  search hint block carrying a `graph_query` example. A question without the
-  phrase is plain recall (use search_memory).
+  user asks HOW memories are connected — shared entities, bridges, threads,
+  multi-hop paths, co-occurrence, meaning search inside one entity or tag —
+  whether or not they say the request phrase "ak graph" / "ak 그래프"; the
+  phrase is a direct way to ask. Lower priority: a search hint block carrying a
+  `graph_query` example. Not for plain recall (use search_memory).
 ---
 
 # AiAkiv graph query
@@ -17,17 +17,20 @@ graph. It answers *structure* questions that flat search cannot: which events
 share entities, what bridges two topics, what happened next in a thread, what
 is semantically far but structurally connected.
 
-**When to reach for it** — first, the request phrase `ak graph` (`ak 그래프`),
-usually followed by a question in the user's own words: the user chose the graph
-query, and the work is translating it faithfully (next section). Also an
-explicit request in other words for a structural walk. Lower priority:
-`hint.graph_query.example` in a search response can be run as-is, then adapted.
+**When to reach for it** — when the question is about structure (how memories
+connect, a path between two things, the entities they share, what came next in
+a thread, or a meaning search inside one entity or tag), pick the graph query on
+your own judgment; no phrase is needed. The user can also ask directly with
+`ak graph` (`ak 그래프`), usually followed by a question in their own words:
+then the user chose the graph query, and the work is translating it faithfully
+(next section). Lower priority: `hint.graph_query.example` in a search response
+can be run as-is, then adapted.
 
-**When not to** — a question without the phrase, even about connections, starts
-with `search_memory`; the graph query is not picked on its own initiative. If
-the tool is not in the list, the server has it disabled; say so.
+**When not to** — plain recall ("what did we decide about X") starts with
+`search_memory`; exact counts and table facts go to `query_memories_with_sql`.
+If the tool is not in the list, the server has it disabled; say so.
 
-## When the user asks with `ak graph`
+## Translating a request (with or without `ak graph`)
 
 1. **Translate.** "Among memories about <name>, the ones about <topic>" is
    `events(entity: $name, text: $q, k: 20)`; "in the <tag> tag, …" uses `tag:`;
