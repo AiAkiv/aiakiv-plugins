@@ -86,10 +86,11 @@ connector, paste `https://mcp.aiakiv.com/mcp?apps=all`: the same endpoint with t
 features turned on. Either way you still approve the sign-in once. See
 [docs/connect.md](docs/connect.md) for per-client steps.
 
-> **ChatGPT is the exception.** It cannot search the registry or write an MCP config,
-> and it does not complete the OAuth sign-in — it asks for a bearer token instead. In
-> ChatGPT, add the URL through the connector UI and, if no sign-in is offered, use a
-> project-bound API key from the console.
+> **ChatGPT and Codex have their own paths.** In a ChatGPT chat (web or app), install
+> **AiAkiv Memory** from the plugin directory and sign in: <https://www.aiakiv.com/docs/chatgpt>.
+> In Codex, paste the install prompt into a Codex chat:
+> <https://www.aiakiv.com/docs/en/codex-install-prompt>. Both are covered in
+> [docs/connect.md](docs/connect.md).
 
 ## Quick start
 

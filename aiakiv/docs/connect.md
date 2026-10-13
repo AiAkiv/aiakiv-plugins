@@ -97,6 +97,34 @@ Name the project in the address, not only in an `X-K2G-Project` header. Some cli
 not send a custom header on every request, so a folder that relies on the header alone
 can end up following Main.
 
+**Codex, account-wide (install prompt).** The official way to connect Codex is the
+install prompt at <https://www.aiakiv.com/docs/en/codex-install-prompt>. Paste it into
+a Codex chat and Codex registers `https://mcp.aiakiv.com/mcp?apps=all` under the name
+`AiAkiv` in your user-wide Codex settings, opens the sign-in window (a person does the
+sign-in; no developer mode is needed), and installs the seven AiAkiv skills from the
+public repository [github.com/AiAkiv/aiakiv-plugins](https://github.com/AiAkiv/aiakiv-plugins)
+into `~/.agents/skills/`. To do it by hand in a terminal instead, run these two lines:
+
+```
+codex mcp add AiAkiv --url "https://mcp.aiakiv.com/mcp?apps=all"
+npx skills add AiAkiv/aiakiv-plugins -a codex -s '*' -g -y
+```
+
+Then open a new session and paste the verification prompt at
+<https://www.aiakiv.com/docs/en/codex-verify-prompt>. This connection is account-wide,
+so it follows Main (`get_save_target` reports `binding` as `"main"`), and it has the
+app features (`run_aiakiv_app_action`, `create_aiakiv_card`). It is installed
+separately because the AiAkiv Memory plugin in the ChatGPT plugin directory cannot
+carry `run_aiakiv_app_action` under OpenAI's review policy: the plugin saves, searches,
+runs graph queries, reads links and makes cards, but app features (console
+management, Contents, card management) in Codex need this connection. Naming rule:
+remove the plugin first and install this as `AiAkiv`. If you keep the plugin to use it
+in chatgpt.com web chats too, name this connection `AiAkivCodex` instead (change the
+name in the prompt or in the first line above), so you can say which one to use. This
+connection does not show up in chatgpt.com web chats. Measured on the Codex CLI
+(2026-10-13); the Codex desktop app reads the same settings but has not been measured
+yet. To pin a folder to one project instead, use the TOML below.
+
 TOML — `.codex/config.toml` (Codex / Codex CLI). The sign-in folder binding above does
 not work in this client, so pin the folder with a project-bound API key (issue it per
 project in the console, shown once):
@@ -180,8 +208,11 @@ Personalization → Custom Instructions; Claude Web: the Project's custom instru
 ## Cautions
 
 1. The path must end with `/mcp`, before any `?` (or zero tools appear).
-2. **ChatGPT + Codex together:** do NOT connect AiAkiv on the ChatGPT side — the
-   ChatGPT connection wins and Codex's per-folder config is ignored.
+2. **ChatGPT plugin + Codex connection:** remove the AiAkiv Memory plugin first and
+   install the Codex connection as `AiAkiv`. If you keep the plugin to use it in
+   chatgpt.com web chats too, name the Codex connection `AiAkivCodex`. Both expose
+   tools with the same names, so with two `AiAkiv` connections the AI picks whichever
+   it likes; the separate name lets you say which one to use.
 3. **OAuth clients (Claude Code, Cursor):** changing the project (the `project` in the
    address) may require signing in again. Keep a separate config per folder to avoid
    repeated logins.
@@ -191,6 +222,7 @@ Personalization → Custom Instructions; Claude Web: the Project's custom instru
    sign-in. Given a `401`, it asks for a bearer token instead of signing in, so
    registry/URL registration stops there. Install **AiAkiv Memory** from the plugin
    directory, or for a pinned folder use a project-bound API key from the console.
+   Codex is different: use the install prompt (see *Codex, account-wide* above).
 
 ## Verify
 

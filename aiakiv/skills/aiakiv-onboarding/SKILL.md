@@ -33,10 +33,18 @@ registry finds it by name (`aiakiv`) or keyword (`memory`) and registers the
 endpoint itself. Same address, same one-time sign-in; the registry only removes the
 typing. Tell them the `?apps=all` address above either way.
 
-**Do not send a ChatGPT user down that path.** ChatGPT cannot search the registry or
-write an MCP config. In ChatGPT, AiAkiv is installed from the plugin directory inside
-the app: search for AiAkiv Memory, install it and sign in. The steps are at
-https://www.aiakiv.com/docs/chatgpt.
+**ChatGPT and Codex each have their own path.** ChatGPT cannot search the registry
+or write an MCP config, so for a ChatGPT chat (web or app) tell the user to install
+AiAkiv Memory from the plugin directory inside the app and sign in. The steps are at
+https://www.aiakiv.com/docs/chatgpt. If the user works in Codex, give them the
+install prompt at https://www.aiakiv.com/docs/en/codex-install-prompt: pasted into a
+Codex chat, it registers `https://mcp.aiakiv.com/mcp?apps=all` as `AiAkiv`, opens
+the sign-in window and installs the seven AiAkiv skills. Codex needs this path for
+app features, because the plugin-directory plugin cannot carry
+`run_aiakiv_app_action` under OpenAI's review policy. If the AiAkiv Memory plugin is
+still installed, tell the user to remove it first, or, if they want to keep it for
+chatgpt.com web chats too, to name the Codex connection `AiAkivCodex`, so the two
+sets of same-named tools stay apart and they can name the one to use.
 
 ## 2. Confirm where memory is going (the "active target")
 

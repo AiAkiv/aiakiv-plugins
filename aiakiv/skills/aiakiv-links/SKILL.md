@@ -47,10 +47,10 @@ and graph queries can cross into it. Each row has `kind: "public"`, a
 - A `usable` public attach works in the same four tools with that `link_id`,
   exactly like a link. Results carry `side: "remote"` the same way, and the
   same rule applies: keep them labelled as the public org's, not the user's.
-- The section comes back to **every member**, even though the link contract
-  list is owner-only. `links: []` with `links_unavailable_reason:
-  "caller_not_owner"` and a `note` means the user is not the team owner, not
-  that nothing is readable: use the public attaches that are listed.
+- The section comes back to **every member** of the team (any role), together
+  with the link list. A `caller_not_member` error means the user is not a
+  member of the active team, so neither the links nor the public attaches are
+  visible from it.
 - `blocked_reason: "attach_not_enabled"`, or a `__public:` id that is not
   listed, means the attach is off or the org is no longer public. Turning it
   on is a console action by the team owner; do not retry.
