@@ -25,10 +25,13 @@ description: >-
   줘"); wants the whole work read at once to make material for another
   medium (a game world file, a video script), or asks what an item,
   creature or faction setting is for, or wants a scene's shot list written
-  or the work's visual style set; says the AI lost the thread or asks for
-  a summary of the whole context ("맥락을 잃은 것 같아", "전체 맥락 요약해
-  줘"); says "ak save" while connected to a Contents work; or is about to
-  call run_aiakiv_app_action with app="contents".
+  or the work's visual style set; wants an arc or part cut into
+  installments for serial release, asks what an installment's numbers
+  mean, or wants a hook or recap written for one ("회차로 잘라 줘", "이번 회
+  끝 고리 써 줘"); says the AI lost the thread or asks for a summary of the
+  whole context ("맥락을 잃은 것 같아", "전체 맥락 요약해 줘"); says "ak
+  save" while connected to a Contents work; or is about to call
+  run_aiakiv_app_action with app="contents".
 ---
 
 # AiAkiv Contents
@@ -79,11 +82,12 @@ hand; a missing tool never blocks the work itself.
    `topic` (writing a scene: `tree`; facts and world lines: `facts`; beats:
    `beats`; another language or style: `lang`; the narrator or how a scene
    is told: `settings` and `slots`; cases of similar scenes: `memory`; the
-   whole work for a game or another medium: `export`). The topics today are
-   `overview`, `tree`, `slots`, `settings`, `facts`, `time`, `links`,
-   `assets`, `export`, `lang`, `beats`, `memory`, `review`, `names`,
-   `screens`, `errors`. The list and what each topic says come from
-   `describe`; if they differ from this line, `describe` wins.
+   whole work for a game or another medium: `export`; cutting into
+   installments: `release`). The topics today are `overview`, `tree`,
+   `slots`, `settings`, `facts`, `time`, `links`, `assets`, `export`,
+   `lang`, `beats`, `memory`, `review`, `release`, `names`, `screens`,
+   `errors`. The list and what each topic says come from `describe`; if
+   they differ from this line, `describe` wins.
 3. Pick the work with `get_work`. Called without `doc_id` it lists the user's
    works with `recent_work_id`. If the user named a work by its title and you
    do not know its `doc_id`, find it in that list, then call `get_work` with
@@ -555,6 +559,66 @@ numbers, takes and the tool's file format are not canon.
 - The creator writes and confirms shot lists on the same Studio screens as
   prose.
 
+## Cutting an arc into installments
+
+An installment (the Korean screens call it "회차") is what goes out at one
+time when a work is released as a serial. It is a cut drawn over the reading
+order, not a resolution and not a level of the tree: the scenes stay under
+their parts. It is a setting node with `facet: "release"`, and its members
+are `released_in` links to it. Slot names, link attributes, the stats keys
+and the recipe are in the `release` topic of `describe`; read it first.
+
+- Three principles. Development is decided in the arc: `pace`, `tempo`,
+  `turn` and the completion conditions are plan slots, so the rhythm is set
+  before the prose exists and cutting comes after; do not try to fix pacing
+  by cutting. The hook and the recap are a layer on the installment, written
+  into its `hook` and `recap` slots and never into a scene's `description`,
+  so the serial text (recap, bodies, hook) and the collected text (bodies
+  only) come from the same prose. The app does not judge; it gives numbers.
+- A scene enters in one of two ways. Whole: a `released_in` link from the
+  scene, with `ord` in `attrs`. By paragraph range: a link from its body node
+  (`body.node_id` in `get_node` on the scene), with `ord`, `from_par` and
+  `to_par`. A paragraph is a block separated by a blank line; paragraphs are
+  counted from 0 and `to_par` is exclusive; an empty `from_par` means the
+  start and an empty `to_par` the end. The form on the Contents screens
+  counts from 1 and includes the end, so speak to the creator in the numbers
+  they see and send 0-based numbers in the call.
+- Two rules, refused with `invalid_data`. A scene enters one way only: never
+  whole in one installment and by body range in another. A paragraph belongs
+  to one installment only: ranges of the same body in different installments
+  must not overlap. To change a cut, `remove_link` and `add_link` again; a
+  link is not edited in place.
+- Order of work:
+  1. Read the part and its scenes with `get_node`: each `body`'s length and
+     `slots.pace`.
+  2. Decide the cuts with the creator. Choosing where to cut against
+     `target_chars` is your work and theirs, from the numbers; the app
+     offers no candidates.
+  3. `add_node` the installment: `kind: "setting"`, `facet: "release"`,
+     `slots` with `no` and `target_chars` as numeric strings. Then
+     `add_link` the members.
+  4. `list_releases` with `doc_id` returns the installments in number order
+     with `members` and `stats`, and `unreleased`: the scenes in no
+     installment. `unreleased` is the to-do list, not an error, and no stat
+     is a verdict.
+  5. Write `recap` and `hook` with `update_node`. `fields.slots` replaces the
+     whole object, so read the four slots with `get_node` first and send all
+     four back.
+- `get_node` on an installment carries `release` (members, stats, hook,
+  recap); on a scene or a body it carries `released_in` when there is one.
+- When a body changes after it was cut, the check `release_stale` (a
+  suggestion) appears on the installment and the body, and `members[].stale`
+  is `true`. Look at the range again and re-link. It blocks nothing.
+- The creator sees the numbers, the members and the serial and collected
+  texts on the installments list and the installment view (the `screens`
+  topic names them), and adds, removes, edits and confirms there. What you
+  make here is a draft. A confirmed installment is published as a setting;
+  links are not published, and the confirmed prose of the scenes does not
+  change by one character.
+- Not in the app: upload to a platform, scheduling, per-installment
+  pricing, automatic cutting, pacing verdicts ("slow", "padded"), reader
+  screens, and cutting by beats (paragraphs only).
+
 ## Common mistakes
 
 - **Everything the AI creates or edits is a draft.** The creator confirms it
@@ -627,6 +691,14 @@ numbers, takes and the tool's file format are not canon.
   style are canon; the prompt text, seed, duration, aspect ratio, tool ids
   and the tries belong to the tool. Register only the adopted file as an
   asset.
+- **Do not write the hook into the scene.** The hook and the recap are the
+  installment's `hook` and `recap` slots; put in a scene's `description`
+  they would also appear in the collected text. See "Cutting an arc into
+  installments".
+- **Do not ask the app where to cut.** `list_releases` gives numbers only,
+  no candidates and no verdict; decide the cuts with the creator from the
+  numbers and the arc's rhythm, and do not look for a "slow" or "padded"
+  judgment in any response.
 - **Ideas go to memos** with `add_scratch`. The creator sees them as memos
   ("메모" on the Korean screens), so use that word with the creator.
 - **Do not edit a memo.** `update_memory` and `hide_memory` are not for
