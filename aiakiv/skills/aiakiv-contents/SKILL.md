@@ -25,9 +25,10 @@ description: >-
   줘"); wants the whole work read at once to make material for another
   medium (a game world file, a video script), or asks what an item,
   creature or faction setting is for, or wants a scene's shot list written
-  or the work's visual style set; says "ak save" while connected to a
-  Contents work; or is about to call run_aiakiv_app_action with
-  app="contents".
+  or the work's visual style set; says the AI lost the thread or asks for
+  a summary of the whole context ("맥락을 잃은 것 같아", "전체 맥락 요약해
+  줘"); says "ak save" while connected to a Contents work; or is about to
+  call run_aiakiv_app_action with app="contents".
 ---
 
 # AiAkiv Contents
@@ -87,6 +88,8 @@ hand; a missing tool never blocks the work itself.
    works with `recent_work_id`. If the user named a work by its title and you
    do not know its `doc_id`, find it in that list, then call `get_work` with
    that `doc_id`.
+4. When starting work on a work, say once the one sentence about asking for a
+   context summary; see "When the context is lost".
 
 ## Finding memos and style
 
@@ -409,6 +412,59 @@ changed. The creator chooses whether to keep each one.
   Opening the "AI connection" screen once creates it; tell the creator that
   if they want one. Do not try to create it yourself.
 
+## When the context is lost
+
+The AI's context window is limited. Hosts drop or compress the early part of
+a long conversation, and writing on after that drifts away from what was
+decided: the work's one line, the value basis, the narrative stance, the
+current part's plan, earlier scenes. The fix is to re-read the decisions from
+the work and the memory, summarise them, and continue from the summary.
+
+- **When you can tell the context was lost.** The signs: the host shows a
+  compaction or summary notice; you cannot recall a decision you know was
+  made; the one line, the current part or the previous scene looks different
+  from what you remember. Then:
+  1. Tell the creator in one sentence that the earlier context was lost, and
+     ask to re-read.
+  2. Call `get_node` on the One line and on the current Part and read
+     `slots.value_basis` on each (the value basis and the narrative stance;
+     see "Value basis and narrative stance"), then on the scene you were on.
+  3. On the process connection, read the process log with `search_memory`
+     (see "The process log"). Search the memos with `search_scratch`.
+  4. Show the creator a short summary, a few lines, not the raw results, and
+     continue from it.
+- **When you cannot tell.** Most hosts give no signal. So at the start of
+  work on a work, and again in the middle of long work (after several scenes
+  or a long stretch of writing), say one sentence to the creator, in the
+  creator's language, to this effect: "If anything in what I write looks
+  off, ask me to summarise the whole context from the memos and the process
+  log." Say it once at each of those points, not every turn. When the
+  creator asks, do the re-read above.
+- **Keep the summary.** When the re-read is done, offer once to keep the
+  summary in the process log with `save_memory`, following "The process log"
+  (the process project only). The next time the context is lost, read that
+  entry first.
+- Do not keep writing on a guess after you notice a loss.
+- Do not re-read everything every turn; re-read only on the signs above or
+  when the creator asks.
+- Do not write the summary into the work as a draft or a memo. It is
+  process, not content.
+
+## Naming characters and places
+
+Each session names without memory of the others, so across sessions and
+works the AI reaches for the same names, and readers notice it.
+
+- Before naming, read the work's existing character and place settings, so a
+  new name does not collide or rhyme with one already there.
+- Pick from the work's time, place and language, not from your first
+  instinct. Pass over the names you reach for first.
+- When the creator wants options, give several from different sources and
+  let them choose. Do not present one name as settled.
+- The `names` topic of `describe` says what the app offers for names today.
+  Use it when the creator asks about the name pool, and do not assume more
+  than it says.
+
 ## The game world: places, creatures, items and the whole work
 
 Contents keeps the facts of the world and the creator's intent, whatever
@@ -533,6 +589,9 @@ numbers, takes and the tool's file format are not canon.
 - **Do not write your own case query.** Use `memory.case_query` unchanged.
   The app built it with the function that wrote the cases' summaries, so a
   reworded or translated query misses them.
+- **Do not keep writing on a lost context.** When the signs of a lost context
+  show, or the creator says something looks off, stop and re-read the
+  decisions first; see "When the context is lost".
 - **No cases is not a blocker.** A missing `memory` key, a `null` query,
   `memory_unavailable` or zero hits all mean "write without cases". Do not
   stop, do not ask the creator to bind or switch anything, and do not invent
