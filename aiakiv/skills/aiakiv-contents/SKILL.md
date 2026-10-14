@@ -145,6 +145,24 @@ there is no link, go back to the app actions. The app actions work whichever
 project the connection follows, so do not ask the creator to change the
 connection. Leaving a memo is always `add_scratch`; links never write.
 
+Memos come in chains: a memo can be linked to the memo before it.
+`get_scratch` and `get_work_memory` return `prev` and `next` (each
+`{event_id, summary, timestamp}` or null), and a `chain` line when either is
+present. On the process connection, where `search_memory` returns memos too,
+its hits carry `connections.sequential {prev, next}` as well. When a memo you
+read has `prev` or `next`, read the linked memos before acting on it, as far
+as the chain goes: a later memo may correct an earlier one, and the latest in
+the chain is the one to follow. `search_scratch` and `search_work_memory`
+hits do not show the chain; read the memo to see it.
+
+Memos are not edited. To correct or continue one, leave a new memo with
+`add_scratch` and pass the earlier memo's `event_id` as `prev_event_id`. The
+response carries `linked_prev_event_id` when the link was made, or
+`link_error` (`{prev_event_id, reason}`) when the memo was saved but the link
+was refused, for example because the earlier entry is a process entry or
+belongs to another team. Then tell the creator so, and do not retry with the
+same text.
+
 ## Attaching other memory to the work
 
 The work team can read any other team's memory through a link: the creator's
@@ -611,6 +629,11 @@ numbers, takes and the tool's file format are not canon.
   asset.
 - **Ideas go to memos** with `add_scratch`. The creator sees them as memos
   ("메모" on the Korean screens), so use that word with the creator.
+- **Do not edit a memo.** `update_memory` and `hide_memory` are not for
+  memos: the memo team outside the process project is read through the app
+  only, and a memo's text is never changed. Correct it with a new memo linked
+  by `prev_event_id`, and read the whole chain before acting on an old memo;
+  see "Finding memos and style".
 - **`save_memory` has two places: style notes and the process log.** Build
   up style descriptions on the style team with `save_memory`, from a folder
   connected to the style team, following the `aiakiv-save-and-recall` skill.
