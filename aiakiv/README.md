@@ -50,8 +50,8 @@ onboarding, share cards, graph queries, and partner links.
   video and images (a scene's shot list as a `shots` body, the form
   setting's `visual_style`, assets with `canon_revision` and the staleness
   signals `stale` and `depicted_changed`), and works of kind `screens` (the
-  screen flow of a web service: user types, paths, and facts ordered by
-  depth).
+  screen flow of a web service: user types, features, and facts placed in
+  category columns).
   The rules themselves stay in the app's `describe`.
 
 ## Install

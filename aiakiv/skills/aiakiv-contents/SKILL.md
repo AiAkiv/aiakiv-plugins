@@ -81,20 +81,35 @@ hand; a missing tool never blocks the work itself.
 
 **Works of kind `screens`.** A work has a kind, `kind` in `get_work`: `novel`
 (the default, shown as Story) or `screens` (Screen flow: the screens of a web
-service and the paths users take through them). In a `screens` work a
-character is a user type, a world line is one user's path, a fact is a screen
-or state reached on that path with its time `Y{depth}` as its order
-(`time: {"text": "Y3"}` for depth 3), a scene is what the user does on one
+service and the features users go through). In a `screens` work a character
+is a user type, a world line is a feature (one path a user takes), a fact is
+a screen or state reached on that path, a scene is what the user does on one
 screen, and a location (`facet: "world"`, a scene's `place_node_id`) is the
-screen itself. Depth is the value of the fact, not of the location: when one
-screen sits at different depths on different paths, put a separate fact on
-each path. Depth shows as plain numbers, with no calendar. The creator
-chooses the kind on the Work kind screen in Studio; the AI cannot change it,
-and once any item has been confirmed nobody can. A `screens` work has no
-installments, narration, beats, style slots and checks or visual style (packs
-`release`, `narration`, `beat_script`, `prose_voice`, `visual`): their slots
-and the `released_in` link are refused with `invalid_data`. The rest is in
-`describe` (`overview`, `tree`, `errors`).
+screen itself. The creator's screens show a world line as a Feature, a part
+as a Feature group and story time as Category, and the top row of the Scene
+flow chart reads Summary.
+
+A fact's time in a `screens` work is not an order but a category column
+(such as Common, claude, chatgpt). The column names, left to right, are
+`columns` in `list_calendars`; `set_calendar` with only `columns` (a list of
+names) rewrites them. Write a fact's `time` as a column name
+(`{"text": "claude"}`) or as `Y{n}` for the n-th column (`{"text": "Y2"}`);
+both are stored as `Y{n}`. A name not in the list is refused with
+`invalid_data`, `reason` `column_unknown`, and the names you can use in
+`params.choices`. Put each fact in one column only: if it holds for every
+category, use a shared column such as Common; if it differs by category,
+make one fact per category. A column has no order inside it; when order
+matters, link the facts (`before`, `causes`). The category belongs to the
+fact, not to the location. Until the columns are written, column numbers
+show as plain numbers; do not make a calendar for a `screens` work.
+
+The creator chooses the kind on the Work kind screen in Studio; the AI cannot
+change it, and once any item has been confirmed nobody can. A `screens` work
+has no installments, narration, beats, style slots and checks or visual
+style (packs `release`, `narration`, `beat_script`, `prose_voice`,
+`visual`): their slots and the `released_in` link are refused with
+`invalid_data`. The rest is in `describe` (`overview`, `tree`, `time`,
+`errors`).
 
 ## Finding memos and style
 
@@ -203,7 +218,7 @@ app created with the work cannot be detached.
 
 `slots.value_basis` is one key with two meanings. On the One line (the
 work's top sentence) it is the **Value basis**: what the Value line on the
-Flow board measures, and from whose side (pack `dramaturgy_core`). On a Part
+Scene flow chart measures, and from whose side (pack `dramaturgy_core`). On a Part
 (resolution `synopsis`) it is the **Narrative stance**: from what standpoint
 that part is told and judged (pack `stance_core`, for every kind of work).
 The `slots` topic of `describe` has the wording.
@@ -216,7 +231,7 @@ The `slots` topic of `describe` has the wording.
   screen (`basis` in the `screens` topic), so the AI is not the only way in.
   Keep the two apart: do not put a part's narrative stance into the One
   line's `value_basis`, or the work's value basis into a Part's.
-- The Flow board draws the Value line itself, one line per zoom joined from
+- The Scene flow chart draws the Value line itself, one line per zoom joined from
   the `turn` values; a part's narrative stance does not break it. Fill in
   `turn` and the basis; do not draw or compute the line.
 
@@ -647,12 +662,12 @@ and the recipe are in the `release` topic of `describe`; read it first.
   effect of another edit; tell the creator first what it will open.
 - **There are no episodes.** A scene's place in story time comes from its
   own `time` or from the facts it `tells`. A scene with neither shows "Not
-  placed in story time" among its Gaps on the Flow board. Do not look for,
+  placed in story time" under Needs check on the Scene flow chart. Do not look for,
   ask about or set episodes; an `episode_id` left on an old node is a
   leftover and places nothing.
-- **Do not put the depth on the location; it belongs to the fact on the
-  path.** In a `screens` work, a screen reached at different depths on
-  different paths gets one fact per path; see "Start here".
+- **Do not put the category on the location; it belongs to the fact.** In
+  a `screens` work each fact sits in one category column; when a screen
+  differs by category, make one fact per category; see "Start here".
 - **Style belongs to form settings, not to scenes.** Register, banned
   patterns and the other style slots go on a form setting; see "Writing in
   another language and form settings".
