@@ -2,36 +2,20 @@
 name: aiakiv-contents
 description: >-
   Where to start, and what not to do, in AiAkiv Contents: the app where a
-  creator writes a work (parts, scenes, settings such as characters and places,
-  facts and world lines, memos, drafts) through
-  run_aiakiv_app_action(app="contents"). Use when the user talks about their
-  Contents work, a scene, a part, a character or place setting, a fact or world
-  line, a memo or a draft; says things like "let's continue my work in
-  Contents", "leave this as a memo", "put this in as a draft" ("Contents 에서
-  내 작품 이어서 쓰자", "메모로 남겨 줘", "초안으로 넣어 줘"); wants to search
-  the work's memos or style memory, including through links from the work
-  team; wants to attach another team's memory (their own brainstorming team,
-  someone else's team, a public org) to the work or detach it; wants to set
-  the value basis of the work or the narrative stance of a part; wants beats
-  extracted from a scene's prose, or a scene written or rendered in another
-  language with the work's form settings; wants a confirmed body used as the
-  model (an anchor) for the work's style, or asks what a style or beats mark
-  in a response means; wants to set how a scene is told (its pace,
-  interiority or what it withholds) or who the narrator is, or asks what a
-  narration review such as a POV violation means; wants scenes like the one
-  being planned or written found in the creator's style memory (cases);
-  wants the work process kept or read (which decisions were made and why,
-  what was tried and dropped), says "keep this as process" ("과정으로 남겨
-  줘"); wants the whole work read at once to make material for another
-  medium (a game world file, a video script), or asks what an item,
-  creature or faction setting is for, or wants a scene's shot list written
-  or the work's visual style set; wants an arc or part cut into
-  installments for serial release, asks what an installment's numbers
-  mean, or wants a hook or recap written for one ("회차로 잘라 줘", "이번 회
-  끝 고리 써 줘"); says the AI lost the thread or asks for a summary of the
-  whole context ("맥락을 잃은 것 같아", "전체 맥락 요약해 줘"); says "ak
-  save" while connected to a Contents work; or is about to call
-  run_aiakiv_app_action with app="contents".
+  creator writes a work (parts, scenes, settings, facts and world lines,
+  memos, drafts) through run_aiakiv_app_action(app="contents"). Use when
+  the user talks about their Contents work, a scene, a part, a setting, a
+  fact, a memo or a draft ("Contents 에서 내 작품 이어서 쓰자", "메모로 남겨 줘",
+  "초안으로 넣어 줘"); wants memos, style or another team's memory
+  searched or attached; wants the value basis, narrative stance, narrator
+  or how a scene is told set; wants beats extracted, a scene written in
+  another language, or an anchor set, or asks what a style, beats or
+  narration mark means; wants cases of similar scenes; wants the work
+  process kept or read ("과정으로 남겨 줘"); wants the work exported for a
+  game or video, a shot list or the visual style; wants installments cut
+  or a hook or recap written ("회차로 잘라 줘"); says the context was lost
+  ("전체 맥락 요약해 줘"); says "ak save" on a Contents work; or is about
+  to call run_aiakiv_app_action with app="contents".
 ---
 
 # AiAkiv Contents
