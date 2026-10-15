@@ -49,7 +49,9 @@ onboarding, share cards, graph queries, and partner links.
   world file; engine numbers and the file stay with the game tool), and
   video and images (a scene's shot list as a `shots` body, the form
   setting's `visual_style`, assets with `canon_revision` and the staleness
-  signals `stale` and `depicted_changed`).
+  signals `stale` and `depicted_changed`), and works of kind `screens` (the
+  screen flow of a web service: user types, paths, and facts ordered by
+  depth).
   The rules themselves stay in the app's `describe`.
 
 ## Install

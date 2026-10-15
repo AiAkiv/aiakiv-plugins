@@ -79,6 +79,23 @@ hand; a missing tool never blocks the work itself.
 4. When starting work on a work, say once the one sentence about asking for a
    context summary; see "When the context is lost".
 
+**Works of kind `screens`.** A work has a kind, `kind` in `get_work`: `novel`
+(the default, shown as Story) or `screens` (Screen flow: the screens of a web
+service and the paths users take through them). In a `screens` work a
+character is a user type, a world line is one user's path, a fact is a screen
+or state reached on that path with its time `Y{depth}` as its order
+(`time: {"text": "Y3"}` for depth 3), a scene is what the user does on one
+screen, and a location (`facet: "world"`, a scene's `place_node_id`) is the
+screen itself. Depth is the value of the fact, not of the location: when one
+screen sits at different depths on different paths, put a separate fact on
+each path. Depth shows as plain numbers, with no calendar. The creator
+chooses the kind on the Work kind screen in Studio; the AI cannot change it,
+and once any item has been confirmed nobody can. A `screens` work has no
+installments, narration, beats, style slots and checks or visual style (packs
+`release`, `narration`, `beat_script`, `prose_voice`, `visual`): their slots
+and the `released_in` link are refused with `invalid_data`. The rest is in
+`describe` (`overview`, `tree`, `errors`).
+
 ## Finding memos and style
 
 There are two ways to read the memo team and the style team.
@@ -482,7 +499,8 @@ recipe are in the `export` topic of `describe`.
 - Three setting facets sit beside `character` and `world`: `item` (an
   object), `creature` and `faction`. They have no slots; the description
   says what the thing looks like and what it is in the story, never its
-  numbers. Rooms and regions are places (`facet: "world"`), and a place
+  numbers. Rooms and regions are places (`facet: "world"`, called Location
+  on the screens), and a place
   inside a place is a `part_of` link, not a child in the tree.
 - Four directed link relations, free text in `note`: `part_of` (place in
   place), `connects_to` (place to place, one way: a two-way passage is two
@@ -632,6 +650,9 @@ and the recipe are in the `release` topic of `describe`; read it first.
   placed in story time" among its Gaps on the Flow board. Do not look for,
   ask about or set episodes; an `episode_id` left on an old node is a
   leftover and places nothing.
+- **Do not put the depth on the location; it belongs to the fact on the
+  path.** In a `screens` work, a screen reached at different depths on
+  different paths gets one fact per path; see "Start here".
 - **Style belongs to form settings, not to scenes.** Register, banned
   patterns and the other style slots go on a form setting; see "Writing in
   another language and form settings".
