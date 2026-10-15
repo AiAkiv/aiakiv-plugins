@@ -41,7 +41,8 @@ onboarding, share cards, graph queries, and partner links.
   body response carries, and narration (a scene's `pace`, `interiority` and
   `withhold`, the `narrator` on a form setting, the four narration reviews),
   and cases of similar scenes found with the query the app builds
-  (`get_node.memory.case_query`), and the process log (the memo team's
+  (`get_node.memory.case_query`), narrowed to the work's technique sources
+  (`technique_sources`, passed as `tags`) when it names any, and the process log (the memo team's
   `:process` project, where the work process is kept with `save_memory`),
   and the game world (item, creature and faction settings, the place
   relations `part_of`, `connects_to`, `located_in`, `member_of`, and
@@ -49,7 +50,8 @@ onboarding, share cards, graph queries, and partner links.
   world file; engine numbers and the file stay with the game tool), and
   video and images (a scene's shot list as a `shots` body, the form
   setting's `visual_style`, assets with `canon_revision` and the staleness
-  signals `stale` and `depicted_changed`), and works of kind `screens` (the
+  signals `stale` and `depicted_changed`), the six body media (`prose`,
+  `shots`, `web`, `game`, `cartoon`, `image`), and works of kind `screens` (the
   screen flow of a web service: user types, features, and facts placed in
   category columns).
   The rules themselves stay in the app's `describe`.

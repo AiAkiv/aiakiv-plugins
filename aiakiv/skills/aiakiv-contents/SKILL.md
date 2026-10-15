@@ -396,7 +396,7 @@ slot is optional. Its tokens are `slots_by_resolution.treatment` in the
 ## Cases from the style memory
 
 `get_node` on a scene, or on a scene's body node, returns `memory`:
-`{case_query, medium, lang, tool, how}`. The app built `case_query` from the
+`{case_query, medium, lang, sources, tool, how}`. The app built `case_query` from the
 scene's slots, title and `done_when`, with the same function that wrote the
 summary of every case in the style team, so the two share one vocabulary.
 The `memory` topic of `describe` has the recipe ("사례 찾기", finding cases).
@@ -404,7 +404,8 @@ The `memory` topic of `describe` has the recipe ("사례 찾기", finding cases)
 - Search when making a scene plan (after reading the arc with `get_node`,
   before `add_node` with `kind: "plan"`) and again before writing a body.
 - Pass `case_query` verbatim as `query` to `search_work_memory(doc_id,
-  query=..., team="technique")`, then read the top three hits with
+  query=..., team="technique")`, adding `tags` when `memory.sources` is not
+  empty (see "Media and technique sources"), then read the top three hits with
   `get_work_memory(doc_id, event_id, team="technique")`. `how` says the same
   in one sentence; if it differs from this line, `how` wins.
 - A case is an analysis block (where the scene enters, what it withholds,
@@ -576,6 +577,49 @@ numbers, takes and the tool's file format are not canon.
 - The creator writes and confirms shot lists on the same Studio screens as
   prose.
 
+## Media and technique sources
+
+**Media.** A body's `medium` is one of six: `prose` (the default), `shots`
+(shown as Video: a shot list), `web` (a web page), `game`, `cartoon` and
+`image`. Choose it in `add_node` with `kind: "body"`; it cannot change
+afterwards. What each medium's text looks like is the one line for it in the
+`medium` argument of `add_node` and in the `lang` topic of `describe`; follow
+that line. Every medium is plain text, and the shape is advised, not checked.
+A scene holds one body per medium and language side by side; `get_node` on
+the scene with `data.medium` picks `body`, and `bodies` lists them all. Style
+checks, anchors, beats and case search are for prose only: a body in another
+medium gets no `marks`, `beats` on it is refused, and the case search in
+`memory` is for prose bodies.
+
+**Technique sources.** A record in the style team can carry a source tag,
+`출처/<key>`, naming whose technique it is (for example
+`출처/aiakiv-web`). A work picks its sources in the form setting slot
+`technique_sources`, a list of source keys such as `["aiakiv-web"]`
+(lowercase letters, digits and hyphens, up to 41 characters, not starting
+with a hyphen). Every kind of work has it, `screens` included. Like
+`anchors`, a nearer form setting adds to a farther one's.
+
+- `memory.sources` in `get_node` holds those keys as tags. When it is not
+  empty, call `search_work_memory(doc_id, query=case_query,
+  team="technique", tags=sources)`; when it is empty, leave `tags` out.
+- `tags` works only with `team: "technique"`, five at most.
+- When the creator asks for one author's or one source's technique only,
+  suggest writing that source key into `technique_sources` on a form setting
+  (at the work root, or under a part). You write it with `update_node`;
+  `fields.slots` replaces the whole object, so read the setting with
+  `get_node` first and send its other slots back. It is a draft the creator
+  confirms; the screens call the slot Source tags.
+- With `tags`, the response carries `tags` (the tags actually used) and
+  `filtered`. `filtered: false` means the results were not filtered by
+  source, because the memory server does not filter by tag yet. Tell the
+  creator the cases may come from any source.
+- Zero hits with a `note` means no record carries that source tag. Ask the
+  creator whether to search again without `tags`; do not drop them on your
+  own.
+- The memory server matches only the last part of a tag, so a source key
+  must be a distinct name that is not the last part of any other tag. `web`
+  would not do, since `매체/web` already ends in it.
+
 ## Cutting an arc into installments
 
 An installment (the Korean screens call it "회차") is what goes out at one
@@ -691,6 +735,10 @@ and the recipe are in the `release` topic of `describe`; read it first.
 - **Do not write your own case query.** Use `memory.case_query` unchanged.
   The app built it with the function that wrote the cases' summaries, so a
   reworded or translated query misses them.
+- **A source is a tag, not words in the query.** Pass `memory.sources` as
+  `tags`; a source name added to `case_query` only blurs the search and
+  filters nothing. Do not pass `tags` with `team: "work"`; it is refused. See
+  "Media and technique sources".
 - **Do not keep writing on a lost context.** When the signs of a lost context
   show, or the creator says something looks off, stop and re-read the
   decisions first; see "When the context is lost".
