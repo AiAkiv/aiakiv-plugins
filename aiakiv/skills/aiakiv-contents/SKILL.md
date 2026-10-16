@@ -78,6 +78,8 @@ hand; a missing tool never blocks the work itself.
    that `doc_id`.
 4. When starting work on a work, say once the one sentence about asking for a
    context summary; see "When the context is lost".
+5. When the work is empty or just begun, suggest the order of work before
+   making anything; see "Building a new work: facts first, then scenes".
 
 **Works of kind `screens`.** A work has a kind, `kind` in `get_work`: `novel`
 (the default, shown as Story) or `screens` (Screen flow: the screens of a web
@@ -110,6 +112,36 @@ style (packs `release`, `narration`, `beat_script`, `prose_voice`,
 `visual`): their slots and the `released_in` link are refused with
 `invalid_data`. The rest is in `describe` (`overview`, `tree`, `time`,
 `errors`).
+
+## Building a new work: facts first, then scenes
+
+When a work is empty or just begun (the `nodes` in `get_work` hold no
+scenes, or only a few), do not start making scenes. First suggest an order
+of work to the creator, and wait for their answer.
+
+The order to suggest:
+
+1. **Facts on the world lines.** List with the creator what happens in the
+   world: the facts (`facet: "event"`), when each one happens in story time,
+   and the world line (`facet: "line"`) it sits on. Refine the list together
+   until it holds. The `facts` and `time` topics of `describe` have the
+   calls.
+2. **Parts and scenes from the facts.** When the facts have settled, design
+   the parts and the scenes on top of them, and link each scene to the facts
+   it tells (`tells`).
+3. **The content.** Only then write the bodies.
+
+In a `screens` work the same order reads: first agree on the category
+columns (`columns`; see "Works of kind `screens`" in "Start here"), then for
+each feature (a world line) list the screens and states (facts) a user goes
+through, then design what the user does on each screen (the scenes).
+
+Discuss at every step. Show a list or a plan first, listen to the creator,
+revise it, and add as drafts only what the creator has said yes to. Do not
+make many items at once; add a few, then ask again.
+
+This is advice, not a rule. If the creator wants another order, for example
+starting from a scene they already have in mind, follow theirs.
 
 ## Finding memos and style
 
@@ -685,6 +717,10 @@ and the recipe are in the `release` topic of `describe`; read it first.
 - **Everything the AI creates or edits is a draft.** The creator confirms it
   on the Contents screens, and the app publishes the confirmed version to
   memory at that moment. Do not tell the creator it is saved before then.
+- **Do not fill an empty work in one go.** In a new or nearly empty work,
+  making many scenes at once without discussing them skips the creator's
+  choices. Suggest the order first and add drafts a few at a time; see
+  "Building a new work: facts first, then scenes".
 - **Do not save the work's content with `save_memory`.** On the work team
   and the memo team's other projects, `save_memory` and `hide_memory` are
   refused by default (while the account permission `app-memory:write` is
