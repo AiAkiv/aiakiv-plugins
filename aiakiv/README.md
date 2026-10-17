@@ -132,7 +132,7 @@ skill, and documentation) is released under the **MIT License** — see
 MIT covers only these connector files. The hosted **AiAkiv** service reached
 through the MCP endpoint (`https://mcp.aiakiv.com/mcp`) is operated by
 **OnMinimum** and governed separately by the AiAkiv **Terms of Service**
-(<https://aiakiv.com/terms>) and **Privacy Policy** (<https://aiakiv.com/privacy>).
+(<https://www.aiakiv.com/terms>) and **Privacy Policy** (<https://www.aiakiv.com/privacy>).
 
 ## Links
 
