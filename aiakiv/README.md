@@ -34,7 +34,7 @@ onboarding, share cards, graph queries, and partner links.
   (`run_aiakiv_app_action(app="contents")`): read the app's `describe` first,
   pick the work, suggest facts first and scenes after for a new work,
   discussing each step with the creator, find memos and style through app
-  actions or links, and the
+  actions or links, hide a memo only when the creator points at it, and the
   mistakes to avoid (AI edits are drafts, no `save_memory` for the work's
   content, facts and world lines live on the fact screens, not in the Studio
   tree), beats extracted from a scene's prose, writing or rendering a

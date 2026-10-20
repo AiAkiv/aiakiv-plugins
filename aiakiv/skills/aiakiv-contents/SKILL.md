@@ -215,6 +215,15 @@ was refused, for example because the earlier entry is a process entry or
 belongs to another team. Then tell the creator so, and do not retry with the
 same text.
 
+Hiding a memo is `hide_scratch` with the memo's `event_id`, and only when
+the creator points at that memo and asks for it to be hidden. Never hide a
+memo on your own judgment. There is no tool that brings a hidden memo back,
+so after hiding say which memo was hidden. The memo screen still lists it,
+marked as hidden. Only memos in this work's memo place can be hidden: a
+process entry, another team's memory or confirmed content is refused with
+`scratch_unavailable`, `reason` `not_a_memo`. If AiAkiv does not know the
+action yet the reason is `hide_unsupported`; tell the creator and stop.
+
 ## Attaching other memory to the work
 
 The work team can read any other team's memory through a link: the creator's
@@ -808,8 +817,9 @@ and the recipe are in the `release` topic of `describe`; read it first.
 - **Do not edit a memo.** `update_memory` and `hide_memory` are not for
   memos: the memo team outside the process project is read through the app
   only, and a memo's text is never changed. Correct it with a new memo linked
-  by `prev_event_id`, and read the whole chain before acting on an old memo;
-  see "Finding memos and style".
+  by `prev_event_id`, and read the whole chain before acting on an old memo.
+  Hiding one is `hide_scratch`, only when the creator asks for that memo to
+  be hidden, and it cannot be undone; see "Finding memos and style".
 - **`save_memory` has two places: style notes and the process log.** Build
   up style descriptions on the style team with `save_memory`, from a folder
   connected to the style team, following the `aiakiv-save-and-recall` skill.
