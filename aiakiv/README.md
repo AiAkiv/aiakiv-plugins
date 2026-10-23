@@ -27,6 +27,10 @@ onboarding, share cards, graph queries, and partner links.
   through `run_aiakiv_app_action(app="console")`: teams and invitations, org
   links, audit logs, save-target history, project presets, and the cards the
   user created. Irreversible operations stay in the web console.
+- **`aiakiv-dashboard` skill** — the same management actions from a shell
+  with `npx aiakiv` (`dashboard`, `console <action>`, `console key`), for
+  clients that have a shell (Claude Code, Codex, Cursor, Gemini CLI). In a web
+  chat without a shell it points the user to the web console instead.
 - **`aiakiv-save-and-recall` skill** — writing a memory that stays findable
   (summary and entity spelling), what to do when a save is rejected, and how to
   read the related-memory signal that search responses carry.
