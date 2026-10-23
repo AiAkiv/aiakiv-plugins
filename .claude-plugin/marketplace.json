@@ -10,16 +10,16 @@
       "name": "aiakiv",
       "source": "./aiakiv",
       "description": "Long-term memory for AI agents: save and recall conversation knowledge as a knowledge graph (MemoryWeft), via the hosted AiAkiv MCP server.",
-      "version": "0.4.35",
+      "version": "0.4.36",
       "author": {
         "name": "OnMinimum",
         "url": "https://aiakiv.com"
       },
       "keywords": [
         "memory",
+        "long-term-memory",
         "knowledge-graph",
         "mcp",
-        "mweft",
         "recall"
       ]
     }
