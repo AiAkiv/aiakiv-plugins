@@ -130,9 +130,11 @@ AI is an app feature, and not every connection has app features. If
 the user that this connection does not support app features, that all of
 this can be done by hand in the web console (the dashboard) under Data,
 Cards, and that having the AI do it takes a connection that has app features
-(a folder connection, an API key connection, the AiAkiv plugin for Claude
-Code or Cursor, or a connector whose address is the `?apps=all` one). The
-aiakiv-console skill has the full wording.
+(a folder connection or an API key connection). An account connection with the
+plain address `https://mcp.aiakiv.com/mcp`, including the AiAkiv plugin's own
+connection, can create cards but does not show `run_aiakiv_app_action`. In a
+client with a shell, `npx aiakiv console` (the `aiakiv-dashboard` skill) can
+manage cards too. The aiakiv-console skill has the full wording.
 
 - Claim you deleted a card or changed its search visibility only when the
   console call actually returned `ok: true`. A `delete_card` error means the

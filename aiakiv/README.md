@@ -26,7 +26,10 @@ onboarding, share cards, graph queries, and partner links.
 - **`aiakiv-console` skill** — managing the account from the conversation
   through `run_aiakiv_app_action(app="console")`: teams and invitations, org
   links, audit logs, save-target history, project presets, and the cards the
-  user created. Irreversible operations stay in the web console.
+  user created. Irreversible operations stay in the web console. The tool is on
+  folder and API-key connections; a sign-in connection with the plain address
+  (including this plugin's own connection) does not show it, so manage the
+  account there with the `aiakiv-dashboard` skill or the web console.
 - **`aiakiv-dashboard` skill** — the same management actions from a shell
   with `npx aiakiv` (`dashboard`, `console <action>`, `console key`), for
   clients that have a shell (Claude Code, Codex, Cursor, Gemini CLI). In a web
@@ -92,9 +95,8 @@ Outside Claude Code, AiAkiv is a remote MCP server at `https://mcp.aiakiv.com/mc
 It is published in the official MCP Registry as **`com.aiakiv/memory`**, so a client
 that can search the registry will find it by name (`aiakiv`) or keyword (`memory`)
 and register the endpoint for you — no URL to paste. To add it by hand as a custom
-connector, paste `https://mcp.aiakiv.com/mcp?apps=all`: the same endpoint with the app
-features turned on. Either way you still approve the sign-in once. See
-[docs/connect.md](docs/connect.md) for per-client steps.
+connector, paste the same address, `https://mcp.aiakiv.com/mcp`. Either way you still
+approve the sign-in once. See [docs/connect.md](docs/connect.md) for per-client steps.
 
 > **ChatGPT and Codex have their own paths.** In a ChatGPT chat (web or app), install
 > **AiAkiv Memory** from the plugin directory and sign in: <https://www.aiakiv.com/docs/chatgpt>.
@@ -141,5 +143,5 @@ through the MCP endpoint (`https://mcp.aiakiv.com/mcp`) is operated by
 ## Links
 
 - Website: <https://aiakiv.com>
-- MCP endpoint: `https://mcp.aiakiv.com/mcp` (to add it by hand, paste
-  `https://mcp.aiakiv.com/mcp?apps=all`)
+- MCP endpoint: `https://mcp.aiakiv.com/mcp` (paste this same address to add it by
+  hand)

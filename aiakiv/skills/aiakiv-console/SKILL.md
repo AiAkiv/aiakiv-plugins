@@ -35,9 +35,9 @@ them. Check before the first call, `describe` included.
 
 1. **`run_aiakiv_app_action` is in your tool list.** Go on. When this
    conversation has two AiAkiv connections, call the tool on the connection
-   that has it. If both have it (an account connector added with the
-   `?apps=all` address has it too), use the one bound to a folder or to an
-   API key, the same choice as for saving.
+   that has it. If both have it (an account connector added earlier with an
+   older address can still have it), use the one bound to a folder or
+   to an API key, the same choice as for saving.
 2. **It is not in your tool list, or a call came back with "This tool is not
    available on this connection."** Nothing happened and nothing changed. Do
    not call it again. Tell the user:
@@ -47,18 +47,23 @@ them. Check before the first call, `describe` included.
      dashboard), https://app.aiakiv.com. Name the menu when you know it, and
      use only menu names that appear in this skill or in
      https://www.aiakiv.com/docs/console-actions.
-   - Having the AI do it takes **a new MCP connection**, one that has app
-     features: a folder connection (a working folder attached with a project
-     chosen; the console's project tab writes the config for it), an API key
-     connection, or the AiAkiv plugin for Claude Code or Cursor. If the user
-     only uses the account connector in Claude on the web or in the mobile
-     apps, say that on this connection the work is done in the dashboard, and
-     that asking the AI needs that connector's address changed to
-     `https://mcp.aiakiv.com/mcp?apps=all` (edit it, or remove it and add it
-     again), or a new connection such as a folder connection in Claude Code
-     or Claude Desktop. The steps are at
-     https://www.aiakiv.com/docs/app-actions. For ChatGPT, see
-     https://www.aiakiv.com/docs/chatgpt.
+   - An account connection (a sign-in with the plain address
+     `https://mcp.aiakiv.com/mcp`) does not show this tool. That covers
+     Claude on the web and in the mobile apps, ChatGPT, Claude Desktop with
+     a connector added by hand, and the AiAkiv plugin's own connection. It
+     still has the memory tools and `create_aiakiv_card`.
+   - If this client has a shell (Claude Code, Codex, Cursor, Gemini CLI),
+     the same management works without app features: run
+     `npx aiakiv console` as the `aiakiv-dashboard` skill describes. Offer
+     that first.
+   - Having the AI do it through `run_aiakiv_app_action` takes **a new MCP
+     connection** that names a project, which shows every tool: a folder
+     connection (`npx aiakiv bind` in the working folder writes it, or copy
+     the config from the console's project tab) or an API key connection.
+     If the user only uses Claude on the web, the mobile apps or ChatGPT,
+     say that on this connection the work is done in the dashboard. The
+     steps are at https://www.aiakiv.com/docs/app-actions. For ChatGPT,
+     see https://www.aiakiv.com/docs/chatgpt.
 3. The console app covers teams and invitations, links, audit logs, projects,
    the save target (Main) and the user's cards; the table below has the
    actions. **Everything the console app does, the user can also do by hand

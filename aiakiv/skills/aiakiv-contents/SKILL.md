@@ -41,14 +41,19 @@ the first call, `describe` included.
   Tell the creator that this connection does not support app features, that
   they can write, edit and confirm the work by hand on the Contents
   screens, and that having the AI do what they asked for (name it) takes
-  **a new MCP connection** that has app features: the connection folder
-  from the "AI connection" screen, any other folder connection, an API key
-  connection, or the AiAkiv plugin for Claude Code or Cursor. If the creator
-  only uses the account connector in Claude on the web or in the mobile
-  apps, say that asking the AI needs that connector's address changed to
-  `https://mcp.aiakiv.com/mcp?apps=all` (edit it, or remove it and add it
-  again), or a new connection such as a folder connection in Claude Code or
-  Claude Desktop. The steps are at
+  **a new MCP connection** that names a project, which shows every tool:
+  the connection folder from the "AI connection" screen, any other folder
+  connection (`npx aiakiv bind` in the working folder writes one), or an
+  API key connection. An account connection (a sign-in with the plain
+  address `https://mcp.aiakiv.com/mcp`) does not show this tool; that
+  covers Claude on the web and in the mobile apps, ChatGPT, Claude Desktop
+  with a connector added by hand, and the AiAkiv plugin's own connection.
+  If the creator only uses one of those, say that the work is done on the
+  Contents screens there, or in a new folder connection in Claude Code or
+  Claude Desktop. If what they asked for is account management (teams,
+  invitations, projects, Main) rather than the work itself, point them to
+  the web console, or in a client with a shell to `npx aiakiv console`
+  (the `aiakiv-dashboard` skill). The steps are at
   https://www.aiakiv.com/docs/app-actions. For ChatGPT, see
   https://www.aiakiv.com/docs/chatgpt.
 

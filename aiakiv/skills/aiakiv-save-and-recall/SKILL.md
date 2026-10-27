@@ -23,6 +23,10 @@ future question would use.
 - **Name the actor in the first sentence** when you record someone's judgment,
   design, or claim. Conclusion-style summaries ("decided that…") drop who said
   it, and "what did X propose?" then misses the record.
+- **Give the reason for a decision.** When you record a decision or an
+  implementation, add one sentence on why this option was chosen over the
+  alternatives. The reason often lives only in a design document that is never
+  saved, and without it a later "why did we do this?" has nothing to find.
 - Write a complete sentence, not a keyword pile.
 
 ## 2. Entity spelling decides what connects
@@ -38,6 +42,13 @@ silently loses connections.
   add a node that connects to nothing.
 - A suggested entity returned by the server is advisory. A literal name match
   does not establish that it denotes the same thing in this record.
+- **When something is renamed, link the two names.** Records before the rename
+  sit on the old entity and records after it on the new one, so a lookup by
+  the new name misses the old ones. Put both names as entities on the record
+  that describes the rename, then call `update_memory` on it with
+  `add_entity_renames=[{"old": "<old name>", "new": "<new name>"}]`. A lookup
+  by either name then returns both. Do this only for a real rename of the same
+  thing, not for two things that merely look alike.
 
 ## 3. When a save is rejected
 
