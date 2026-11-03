@@ -34,6 +34,17 @@ future question would use.
 Recall weaves records together on shared entity nodes, so spelling drift
 silently loses connections.
 
+- **An entity name is the name of a person, product, place or concept**, usually
+  1 to 3 words, never a phrase or sentence. **A tag is a topic of a few words**, not
+  a description of this memory. Details go in `summary` and `content`.
+- **Entity and tag names are visible to everyone in the team**, including parts
+  that cannot read this memory. Do not put sensitive details in them.
+- **A new name of 5 or more words is refused**, and so is one over 20 Han or Kana
+  characters with no spaces. The memory is still saved without that name, which
+  comes back in `rejected_entities` or `rejected_tags` with reason `too_many_words`
+  or `too_long`. Shorten it to the real name of the thing and add it with
+  `update_memory` (`add_entities`, `add_tags`). Do not split it into generic pieces.
+  A name that already exists in the team keeps working at any length.
 - **One canonical spelling per entity** — the full name *or* the acronym, not
   both. Pick one and use it in every save.
 - **Keep proper nouns and acronyms as they are written**: `PostgreSQL`, `RLS`.
