@@ -92,6 +92,14 @@ Re-read the source in full and save again, splitting if it is long. Pass
 `allow_truncation_marker=true` only when the marker is genuinely part of what
 you mean to record, such as a bug report *about* truncation.
 
+### `save_part_no_write_seat`
+
+The project or key saves to a team part, and this account has no write access
+on that part itself. Access on a part above it does not count. Nothing was
+saved and the daily limit was not used. Do not retry: the same save is refused
+until a person changes something. Pass the `message` on to the user as it is. A
+team admin can give write access on that part, or the save part can be changed.
+
 ### The arguments arrive merged, empty, or the call errors on serialization
 
 Two causes, both about argument boundaries:
