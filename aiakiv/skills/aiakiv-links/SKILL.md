@@ -51,6 +51,9 @@ and graph queries can cross into it. Each row has `kind: "public"`, a
   with the link list. A `caller_not_member` error means the user is not a
   member of the active team, so neither the links nor the public attaches are
   visible from it.
+- A member who is not placed in any part of the team yet still gets the list,
+  but every link and public attach says `usable: false` with
+  `blocked_reason: "caller_not_placed"` (see below).
 - `blocked_reason: "attach_not_enabled"`, or a `__public:` id that is not
   listed, means the attach is off or the org is no longer public. Turning it
   on is a console action by the team owner; do not retry.
@@ -99,6 +102,10 @@ memory failed:
     sending them to fix a direction.
 - `attach_not_enabled` — a `__public:` id whose attach is off, or whose org is
   no longer public (see "Public attaches" above). Owner/console action.
+- `caller_not_placed` — the user is a member of the team but is not placed in
+  any part of it yet. Links and public attaches stay closed until then, the
+  same as the team's own memory. Tell the user to ask a team admin to place
+  them. Do not retry.
 - `contract_version_too_old` — both owners must re-consent;
   `list_partner_links` → `reconsent` shows who is missing.
 - `budget_exceeded` — the remote row/time budget ran out mid-walk. Narrow the

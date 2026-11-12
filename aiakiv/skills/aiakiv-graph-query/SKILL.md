@@ -27,7 +27,9 @@ then the user chose the graph query, and the work is translating it faithfully
 can be run as-is, then adapted.
 
 **When not to** — plain recall ("what did we decide about X") starts with
-`search_memory`; exact counts and table facts go to `query_memories_with_sql`.
+`search_memory`; exact counts and table facts go to `query_memories_with_sql`,
+which supports simple read queries only (filters, joins, counts, sums,
+grouping; its tool description lists the rest).
 If the tool is not in the list, the server has it disabled; say so.
 
 ## Translating a request (with or without `ak graph`)
