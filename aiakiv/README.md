@@ -23,47 +23,15 @@ onboarding, share cards, graph queries, and partner links.
 - **`aiakiv-links` skill** — reading a linked partner org's memory (the
   `*_partner_*` tools): which tool fits which question, keeping partner content
   labelled as theirs, and what each link error reason means.
-- **`aiakiv-console` skill** — managing the account from the conversation
-  through `run_aiakiv_app_action(app="console")`: teams and invitations, org
-  links, audit logs, save-target history, project presets, and the cards the
-  user created. Irreversible operations stay in the web console. The tool is on
-  folder and API-key connections; a sign-in connection with the plain address
-  (including this plugin's own connection) does not show it, so manage the
-  account there with the `aiakiv-dashboard` skill or the web console.
-- **`aiakiv-dashboard` skill** — the same management actions from a shell
-  with `npx aiakiv` (`dashboard`, `console <action>`, `console key`), for
-  clients that have a shell (Claude Code, Codex, Cursor, Gemini CLI). In a web
-  chat without a shell it points the user to the web console instead.
+- **`aiakiv-dashboard` skill** — managing the account (teams and invitations,
+  org links, audit logs, project presets, Main, and the cards the user created)
+  from a shell with `npx aiakiv` (`dashboard`, `console <action>`,
+  `console key`), for clients that have a shell (Claude Code, Codex, Cursor,
+  Gemini CLI). In a web chat without a shell it points the user to the web
+  console instead.
 - **`aiakiv-save-and-recall` skill** — writing a memory that stays findable
   (summary and entity spelling), what to do when a save is rejected, and how to
   read the related-memory signal that search responses carry.
-- **`aiakiv-contents` skill** - the entry point for AiAkiv Contents
-  (`run_aiakiv_app_action(app="contents")`): read the app's `describe` first,
-  pick the work, suggest facts first and scenes after for a new work,
-  discussing each step with the creator, find memos and style through app
-  actions or links, hide a memo only when the creator points at it, and the
-  mistakes to avoid (AI edits are drafts, no `save_memory` for the work's
-  content, facts and world lines live on the fact screens, not in the Studio
-  tree), beats extracted from a scene's prose, writing or rendering a
-  scene in another language with the work's form settings, and anchors (a
-  confirmed body the creator names as the style model) with the `marks` a
-  body response carries, and narration (a scene's `pace`, `interiority` and
-  `withhold`, the `narrator` on a form setting, the four narration reviews),
-  and cases of similar scenes found with the query the app builds
-  (`get_node.memory.case_query`), narrowed to the work's technique sources
-  (`technique_sources`, passed as `tags`) when it names any, and the process log (the memo team's
-  `:process` project, where the work process is kept with `save_memory`),
-  and the game world (item, creature and faction settings, the place
-  relations `part_of`, `connects_to`, `located_in`, `member_of`, and
-  `export_work`, which reads the whole work so the AI can write a game
-  world file; engine numbers and the file stay with the game tool), and
-  video and images (a scene's shot list as a `shots` body, the form
-  setting's `visual_style`, assets with `canon_revision` and the staleness
-  signals `stale` and `depicted_changed`), the six body media (`prose`,
-  `shots`, `web`, `game`, `cartoon`, `image`), and works of kind `screens` (the
-  screen flow of a web service: user types, features, and facts placed in
-  category columns).
-  The rules themselves stay in the app's `describe`.
 
 ## Install
 

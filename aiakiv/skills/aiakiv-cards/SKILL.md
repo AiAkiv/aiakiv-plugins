@@ -116,28 +116,18 @@ the wide image. The page always shows the full text; only the images crop.
 `create_aiakiv_card` only creates. Editing a card's text is not possible
 anywhere; create a new card instead (the old one stays up until deleted).
 
-Listing, deleting, search visibility and filing tags for cards the user
-already made go through `run_aiakiv_app_action(app="console")`: `list_cards`,
-`set_card_searchable`, `set_card_tags` and `delete_card`. Each needs the
-matching console AI permission the user turned on; see the aiakiv-console
-skill. The user can do the same things by hand in the AiAkiv web console
-(app.aiakiv.com, Data, Cards).
-
-Creating a card works on every AiAkiv connection. Managing cards through the
-AI is an app feature, and not every connection has app features. If
-`run_aiakiv_app_action` is not in your tool list, or a call comes back with
-"This tool is not available on this connection.", do not call it again. Tell
-the user that this connection does not support app features, that all of
-this can be done by hand in the web console (the dashboard) under Data,
-Cards, and that having the AI do it takes a connection that has app features
-(a folder connection or an API key connection). An account connection with the
-plain address `https://mcp.aiakiv.com/mcp`, including the AiAkiv plugin's own
-connection, can create cards but does not show `run_aiakiv_app_action`. In a
-client with a shell, `npx aiakiv console` (the `aiakiv-dashboard` skill) can
-manage cards too. The aiakiv-console skill has the full wording.
+Creating a card works on every AiAkiv connection. No tool in the conversation
+manages cards the user already made. Listing, deleting, search visibility and
+filing tags are done by the user by hand in the AiAkiv web console
+(app.aiakiv.com, Data, Cards). In a client with a shell, `npx aiakiv console`
+does the same with the actions `list_cards`, `set_card_searchable`,
+`set_card_tags` and `delete_card` (the `aiakiv-dashboard` skill covers the
+command). Each of those needs the matching console AI permission the user
+turned on. In a client without a shell, tell the user where in the web console
+to do it.
 
 - Claim you deleted a card or changed its search visibility only when the
-  console call actually returned `ok: true`. A `delete_card` error means the
+  console command actually returned `ok: true`. A `delete_card` error means the
   card is still public.
 - Search visibility is OFF by default. Turning it on lists the card in
   card.aiakiv.com search by title and tags; turning it off later un-lists it,

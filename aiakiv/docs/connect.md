@@ -21,17 +21,10 @@ two items below for what this connection has.
   ChatGPT it is listed in the plugin directory as **AiAkiv Memory**: install it from
   there. It is **not** in the in-app connector directories of Claude Web / Grok. In
   those apps, add it **manually** as a custom connector with the address to paste above.
-- Every connection can save, search, and make cards (`create_aiakiv_card`). The app
-  action tool (`run_aiakiv_app_action`: console management such as teams, invitations,
-  projects, and card management, and AiAkiv Contents, from the conversation) is only on
-  a connection that names a project: a folder connection (`?project=`, which
-  `npx aiakiv bind` writes for you) or an API-key connection. These show every tool.
-- A sign-in connection with the plain address does not show `run_aiakiv_app_action`.
-  This covers Claude on the web and mobile, ChatGPT (the plugin-directory install
-  too), Claude Desktop when you add the connector by hand, and the AiAkiv plugin's own
-  connection. There, manage the account in the web console, or in a client with a shell
-  run `npx aiakiv console` (the `aiakiv-dashboard` skill). For the app features in the
-  conversation, connect a folder with `npx aiakiv bind` or use an API key.
+- Every connection can save, search, and make cards (`create_aiakiv_card`). No tool
+  manages the account from the conversation: manage teams, invitations, projects,
+  Main, links and cards in the web console, or in a client with a shell run
+  `npx aiakiv console` (the `aiakiv-dashboard` skill).
 - A connector you added earlier with an older address keeps working for now.
 
 ## Finding it in the official MCP Registry
@@ -115,10 +108,9 @@ npx skills add AiAkiv/aiakiv-plugins -a codex -s '*' -g -y
 Then open a new session and paste the verification prompt at
 <https://www.aiakiv.com/docs/en/codex-verify-prompt>. This connection is account-wide,
 so it follows Main (`get_save_target` reports `binding` as `"main"`). It has the
-memory tools and `create_aiakiv_card`, but not `run_aiakiv_app_action`. Codex has a
-shell, so manage the account with `npx aiakiv console` (the `aiakiv-dashboard` skill);
-for the app features in the conversation (Contents, console actions), connect the
-folder with `npx aiakiv bind` or use a project API key. Naming rule:
+memory tools and `create_aiakiv_card`. Codex has a shell, so manage the account with
+`npx aiakiv console` (the `aiakiv-dashboard` skill); to tie a folder to one project,
+use `npx aiakiv bind` or a project API key. Naming rule:
 remove the plugin first and install this as `AiAkiv`. If you keep the plugin to use it
 in chatgpt.com web chats too, name this connection `AiAkivCodex` instead (change the
 name in the prompt or in the first line above), so you can say which one to use. This
@@ -190,9 +182,9 @@ it to another project, swap in that project's key.
 - **xAI/Grok:** grok.com/connectors → New Connector → Custom → paste
   `https://mcp.aiakiv.com/mcp`.
 
-All three can save, search, and make cards. None of them has the app action tool
-(`run_aiakiv_app_action`): manage teams, invitations, projects, and cards in the web
-console. A connector added earlier with an older address keeps working for now.
+All three can save, search, and make cards. Manage teams, invitations, projects, and
+cards in the web console. A connector added earlier with an older address keeps
+working for now.
 
 **Persona pairing (ChatGPT / Claude Web).** A persona returned inside a tool result
 usually does NOT change a web client's behavior on its own. To make it stick, paste

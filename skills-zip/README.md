@@ -17,9 +17,7 @@ Download the one you need and upload it:
 | `aiakiv-save-and-recall.zip` | Write a memory that stays findable, and recall it |
 | `aiakiv-graph-query.zip` | Ask questions across the memory graph |
 | `aiakiv-cards.zip` | Turn a memory topic into a public share card |
-| `aiakiv-console.zip` | Manage teams, invitations, links and settings from the chat |
 | `aiakiv-links.zip` | Read a linked partner's memory |
-| `aiakiv-contents.zip` | Write a work in AiAkiv Contents |
 | `aiakiv-dashboard.zip` | Manage the account from a shell with `npx aiakiv` (clients with a shell only) |
 
 A skill alone does nothing: the AiAkiv MCP connection must be there as well.

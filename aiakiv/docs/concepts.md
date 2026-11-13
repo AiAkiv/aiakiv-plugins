@@ -62,10 +62,10 @@ careful senior reviewer; reply in English").
   `active_target` echo on tool responses — and **adopts it** (tone / role / language)
   for the conversation.
 - It is **optional**: unset means no persona, nothing changes.
-- It is set by the **human in the console**; an AI can change it only through the
-  console app while the user has turned on its `project:persona` permission (off by
-  default), and it **never overrides the save rules** (the explicit save command is
-  still required).
+- It is set by the **human in the console**; an AI with a shell can change it only
+  through `npx aiakiv console` while the user has turned on its `project:persona`
+  permission (off by default), and it **never overrides the save rules** (the explicit
+  save command is still required).
 
 **Persona-only projects** — a useful pattern: several projects in the **same team and
 same domain** that differ *only* in persona. They all read and write the ONE shared
@@ -77,9 +77,9 @@ memory itself kept apart.
 ## Managing all of this
 
 Projects, teams, invites, keys, Main-switching, and personas are human actions in the
-console at <https://aiakiv.com> by default. An AI connected to AiAkiv can do some of
-them through the console app (`run_aiakiv_app_action`, app `console`) — creating a
-team, inviting, switching or turning Main off and on, editing a persona — but each
-sits behind a permission the user turns on in the console's AI permissions, and every
-edit permission starts off. API keys, deleting accounts or teams, and the permission
+console at <https://aiakiv.com> by default. In a client with a shell, an AI can do
+some of them with the AiAkiv CLI (`npx aiakiv console`) — creating a team, inviting,
+switching or turning Main off and on, editing a persona — but each sits behind a
+permission the user turns on in the console's AI permissions, and every edit
+permission starts off. No MCP tool does them. API keys, deleting accounts or teams, and the permission
 table itself stay console-only.

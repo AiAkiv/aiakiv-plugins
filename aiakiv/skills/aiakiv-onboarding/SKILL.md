@@ -23,7 +23,7 @@ The service address is `https://mcp.aiakiv.com/mcp`, and its path must end with
 `/mcp`. To add AiAkiv by hand in a client that takes an address and a sign-in (a
 custom connector in Claude on the web, desktop or mobile, Grok and the like), the
 address is the same `https://mcp.aiakiv.com/mcp`, with nothing after `/mcp`. Such a
-connection has the memory tools and card creation but not app features (§7). If a
+connection has the memory tools and card creation (§7). If a
 connection the user set up by hand shows no tools,
 check that the part of its URL before any `?` ends with `/mcp` (the bare domain
 returns zero tools).
@@ -40,10 +40,9 @@ AiAkiv Memory from the plugin directory inside the app and sign in. The steps ar
 https://www.aiakiv.com/docs/chatgpt. If the user works in Codex, give them the
 install prompt at https://www.aiakiv.com/docs/en/codex-install-prompt: pasted into a
 Codex chat, it registers `https://mcp.aiakiv.com/mcp` as `AiAkiv`, opens the
-sign-in window and installs the eight AiAkiv skills. Like any account connection it
-has no app features; in Codex, manage the account with `npx aiakiv console` (the
-`aiakiv-dashboard` skill), and for app features connect the folder with
-`npx aiakiv bind` or a project API key. If the AiAkiv Memory plugin is
+sign-in window and installs the AiAkiv skills. In Codex, manage the account with
+`npx aiakiv console` (the `aiakiv-dashboard` skill); to tie a folder to one project,
+use `npx aiakiv bind` or a project API key. If the AiAkiv Memory plugin is
 still installed, tell the user to remove it first, or, if they want to keep it for
 chatgpt.com web chats too, to name the Codex connection `AiAkivCodex`, so the two
 sets of same-named tools stay apart and they can name the one to use.
@@ -149,28 +148,15 @@ Two related refusals are not transport problems and are not fixed by
   covers too much, and squeezing it blurs several topics into one vector that
   then matches no specific query.
 
-## 7. Which connection has app features
+## 7. Managing the account
 
-**App features** means asking the AI to do app work through
-`run_aiakiv_app_action`, such as console management (teams, invitations,
-projects, Main, cards) or working in Contents.
+Saving, searching, reading full text, reading linked teams, graph queries and
+creating cards work on every AiAkiv connection. No tool in the conversation
+manages the account.
 
-- Saving, searching, reading full text, reading linked teams, graph queries
-  and creating cards work on every AiAkiv connection.
-- Folder connections (a `project` in the URL, §4, which `npx aiakiv bind`
-  writes) and API key connections have app features; they show every tool.
-- An account connection, a sign-in with the plain address and no `project`,
-  does not. That covers Claude on the web and in the mobile apps, ChatGPT,
-  Claude Desktop with a connector added by hand, and the connection this
-  plugin registers. There the tool is missing from the tool list, and a call
-  by name is refused with "This tool is not available on this connection."
-  A connector added earlier with an older address keeps working and can
-  still have the tool. When a conversation has both kinds,
-  call the tool on the connection that has it; when two connections have
-  it, use the one bound to a folder or to an API key.
-- Everything the console app does, the user can also do by hand in the web
-  console (the dashboard), https://app.aiakiv.com. In a client with a shell,
-  `npx aiakiv console` does the same management without app features (the
-  `aiakiv-dashboard` skill). For app features in the conversation, the user
-  needs a folder connection or an API key connection; the `aiakiv-console`
-  skill says what to tell the user.
+- The user manages teams, invitations, projects, Main, links and the cards
+  they made by hand in the web console (the dashboard), https://app.aiakiv.com.
+- In a client with a shell, `npx aiakiv console` does the same management
+  (the `aiakiv-dashboard` skill).
+- In a client without a shell, tell the user where in the web console to do
+  it.
