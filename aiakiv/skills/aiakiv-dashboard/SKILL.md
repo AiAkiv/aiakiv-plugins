@@ -3,9 +3,10 @@ name: aiakiv-dashboard
 description: >-
   Manage the user's AiAkiv account from a shell with `npx aiakiv`. Use when the
   user asks about their AiAkiv teams, projects, AI console permissions, links
-  (connections to partner teams), cards or save target (Main), or explicitly
-  asks for a management task such as inviting someone, creating a project,
-  switching Main, or turning Main off or back on, and the client has a shell
+  (connections to partner teams), cards, save target (Main) or the parts inside
+  a team, or explicitly asks for a management task such as inviting someone,
+  creating a project, giving a person a seat in a part, moving memories to
+  another part, switching Main, or turning Main off or back on, and the client has a shell
   (Claude Code, Codex, Cursor, Gemini CLI). In a web chat without a shell,
   point the user to the web console instead.
 ---
@@ -47,8 +48,8 @@ comes back unknown. It lists each action with its `kind` (read or write),
 and `settings_url`. Do not guess argument names; `describe` is the live
 contract. The actions cover teams and invitations, projects, the AI permissions
 table (read only), links to partner teams and their audit logs, the user's
-cards, and the save target (Main): switching it, clearing it, turning it off
-and on.
+cards, the parts inside a team (below), and the save target (Main): switching
+it, clearing it, turning it off and on.
 
 ## Two layers for every write
 
@@ -81,6 +82,55 @@ to it too. That is intended.
   which card) before running. A Main destination is only an id from a list
   action, never a name you built.
 
+## Parts inside a team (CLI only)
+
+Six actions manage the parts of a team: `list_parts`, `create_part`,
+`assign_part_member`, `unassign_part_member`, `move_part_member` and
+`move_part_memories`. They exist only in the CLI; the MCP connection does not
+have them. Take their arguments from `describe`.
+
+- **Naming.** Pick the team with its `org_id` from `console teams`. There is no
+  `team` argument; do not pass one. A part is its node id or `@handle` from
+  `list_parts`, or the team name for the team's top part. A person is their
+  email, and they must already be a member of the team.
+- **Permissions.** `part:read` (listing) is on by default. `part:edit` (create a
+  part), `part:assign` (give, take away or move a seat) and `part-memory:move`
+  (move memories) are off by default. Giving, changing or moving an admin seat
+  needs `part:admin` as well as `part:assign`. When one is off the call exits 6;
+  ask the user to turn it on under "AI permissions" in the web console, as below.
+- **Reach follows the user's role.** The team owner, or an admin of the top
+  part, works on the whole team. An admin of a lower part works on that part
+  and the parts below it, never a sibling or a parent part. Writers and readers
+  can only list. For `forbidden`, `team_owner` (the owner gets no seat) or
+  `inherited_role` (the seat adds nothing to a role from a parent part), relay
+  `message` and do not retry.
+- **`pending_changes`.** Someone's org structure changes in these parts are not
+  applied yet, so writes are refused. Ask the user to apply or undo them in the
+  web console first.
+- **`unassign_part_member` takes away one part seat only.** The person stays in
+  the team; say so. Removing someone from the team is done in the web console.
+- `assign_part_member`, `move_part_member` and `move_part_memories` widen
+  access, so the `--yes` rule above applies: say who gets which seat, or which
+  memories go where, and wait for a yes.
+
+### Moving memories
+
+`move_part_memories` takes `event_ids` (1 to 50 memory ids), `to` (a part, or
+`"team"` for the top of the team) and `reason` (kept in the audit log). It
+moves all of them or none.
+
+1. Tell the user which memories go to which part and why. After their yes, run
+   it with `--yes`.
+2. If new people would be able to read the memories, nothing moves yet. The
+   call exits 8 with `confirm_required`, a `new_viewers` list and a
+   `confirm_token`. Show the user every name and email in `new_viewers` and
+   ask whether these people may read the memories.
+3. Only if they agree, run the same call again with `--yes`, the same
+   `event_ids`, `to` and `reason`, and `"confirm_token"` added to `--data`.
+   `--yes` never replaces this step.
+   If the answer is `confirm_required` again, something changed: show the new
+   list and ask again.
+
 ## Exit codes
 
 | Code | Meaning | What to do |
@@ -93,7 +143,7 @@ to it too. That is intended.
 | 5 | Rate limited | Wait. Never loop |
 | 6 | `console_permission_disabled` | Hand it to the user (below). Do not repeat the call |
 | 7 | The CLI entrance is not open on the server yet | Say so, and point to the web console |
-| 8 | Other error envelope (`unknown_action`, `invalid_data`, ...) | Run `describe` again; if `field` is named, fix that one argument and retry once |
+| 8 | Other error envelope (`unknown_action`, `invalid_data`, ...) | Run `describe` again; if `field` is named, fix that one argument and retry once. For part actions, `confirm_required`, `pending_changes` and refusals also come here; see "Parts inside a team" |
 
 ### Permission turned off (exit 6)
 

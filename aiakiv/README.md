@@ -24,7 +24,8 @@ onboarding, share cards, graph queries, and partner links.
   `*_partner_*` tools): which tool fits which question, keeping partner content
   labelled as theirs, and what each link error reason means.
 - **`aiakiv-dashboard` skill** — managing the account (teams and invitations,
-  org links, audit logs, project presets, Main, and the cards the user created)
+  org links, audit logs, project presets, Main, the cards the user created, and
+  the parts inside a team: creating parts, placing people, moving memories)
   from a shell with `npx aiakiv` (`dashboard`, `console <action>`,
   `console key`), for clients that have a shell (Claude Code, Codex, Cursor,
   Gemini CLI). In a web chat without a shell it points the user to the web
